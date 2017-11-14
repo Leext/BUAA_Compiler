@@ -1,0 +1,6 @@
+/Compiler/Debug/*
+*.swp
+*.sdf
+*.opensdf
+/Debug
+/ipch
