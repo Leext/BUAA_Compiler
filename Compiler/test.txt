@@ -1,0 +1,92 @@
+
+const int a = +10;
+const char b = 'a';//苟利国家生死以
+	/*岂因祸福避趋之
+
+
+
+	*/
+
+int c ,d[10];
+char e = '_',f[20];
+
+int foo1(int x)
+{
+	const int a = +10;
+	const char b = 'a';
+	int c ,d[10];
+	char e = '_',f[10];
+	if(x > 0)
+	{
+		int i;
+		i=0;
+		while(i<10)
+		{
+			d[i]=i;
+			printf(d[i]);
+			i = i+1;
+		}
+	}
+	else
+	{
+		char i;
+		i = 'z';
+		while(i>'z'-10)
+		{
+			f['z'-i]=i;
+			printf(d['z'-i]);
+			i = i-1;
+		}
+	}
+	return a;
+}
+int foo2
+{
+	printf("hello",foo1(2));
+	return 0;
+}
+
+void bar1(int x,int y)
+{
+	switch(y)
+	{
+		case -2:printf("-squre",-x*x);
+		case -3:printf("-cube",-x*x*x);
+		case 2:printf("square",x*x);
+		case 3:printf("cube",x*x*x);
+		default:printf("self",x);
+	}
+}
+void bar2
+{
+	int x,y;
+	scanf(x,y);
+	foo1(x);
+	foo1(y);
+}
+int foobar(int x)
+{
+	if(x>0)
+		return x*foobar(x-1);
+	else
+		return 1;
+}
+void main()
+{
+	int i;
+	c = a;
+	c=(c*(a+'a')/(-15)-b)*'b'; 
+	printf(c);
+	foo1(a);
+	foo1(-a);
+	foo2;
+	i = -3;
+	while(i<=3)
+	{
+		bar1(i,i);
+		i=i+1;
+	}
+	bar2;
+	printf(foobar(5));
+}
+//

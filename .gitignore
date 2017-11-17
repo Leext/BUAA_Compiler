@@ -1,6 +1,9 @@
 /Compiler/Debug/*
+/Compiler/Release
 *.swp
 *.sdf
 *.opensdf
 /Debug
+/Release
 /ipch
+/.vs
