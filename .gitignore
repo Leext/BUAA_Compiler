@@ -1,9 +1,9 @@
-/Compiler/Debug/*
-/Compiler/Release
+/Compiler/Compiler/Debug/
+/Compiler/Compiler/Release
 *.swp
 *.sdf
 *.opensdf
-/Debug
-/Release
-/ipch
+/Compiler/Debug
+/Compiler/Release
+/Compiler/ipch
 /.vs

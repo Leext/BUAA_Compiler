@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "Tokenizer.h"
-#include <cctype>
 Symbol Tokenizer::nextSym()
 {
 	try
@@ -70,15 +70,16 @@ Symbol Tokenizer::nextSym()
 			}
 			return sym;
 		case '/':
-            nextChar();
+			nextChar();
 			if (c == '/')  //one line comment
 			{
-                try
-                {
-				while (nextChar() != '\n');
-                }catch(std::exception &e)
-                {
-                }
+				try
+				{
+					while (nextChar() != '\n');
+				}
+				catch (std::exception &e)
+				{
+				}
 				goto start;
 			}
 			else if (c == '*')  //multi lines comment
@@ -140,6 +141,7 @@ Symbol Tokenizer::nextSym()
 	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-        system("pause");
+		system("pause");
 	}
+    return sym;
 }

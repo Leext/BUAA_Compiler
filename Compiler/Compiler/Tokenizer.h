@@ -1,9 +1,5 @@
 #pragma once
-#include <string>
-#include <iostream>
-#include <cctype>
-#include <unordered_map>
-#include <fstream>
+#include "stdafx.h"
 enum Symbol
 {
 	PLUS, MINUS, MULT, DIV,
@@ -60,6 +56,7 @@ public:
 		str2sym["return"] = RTN;
 		str2sym["main"] = MAIN;
 		lineCount = 1;
+		c = 0;
 	};
 	Symbol nextSym();
 	const string& getIdent()
@@ -87,15 +84,14 @@ protected:
 	int lineCount;
 	int nextChar()
 	{
+		if (c == '\n')
+		{
+			lineCount++;
+			line.clear();
+		}
 		if ((c = inputStream.get()) != EOF)
 		{
-			if (c == '\n')
-			{
-				lineCount++;
-				line.clear();
-			}
-			else
-				line.push_back(c);
+			line.push_back(c);
 			return c;
 		}
 		throw std::exception("eof");
