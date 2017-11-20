@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-enum Symbol
+enum Token
 {
 	PLUS, MINUS, MULT, DIV,
 	LESS, LEQ, GRT, GEQ, NEQ, EQU,
@@ -28,59 +28,59 @@ public:
 	Tokenizer(fstream& inputStream) : inputStream(inputStream)
 	{
 		//initialize map from single char to symbol
-		char2sym['+'] = PLUS;
-		char2sym['-'] = MINUS;
-		char2sym['*'] = MULT;
-		char2sym['/'] = DIV;
-		char2sym['='] = BECOME;
-		char2sym[','] = COMMA;
-		char2sym[':'] = COLON;
-		char2sym[';'] = SEMICOLON;
-		char2sym['{'] = lBRACE;
-		char2sym['}'] = rBRACE;
-		char2sym['['] = lBRACK;
-		char2sym[']'] = rBRACK;
-		char2sym['('] = lPARE;
-		char2sym[')'] = rPARE;
+		char2token['+'] = PLUS;
+		char2token['-'] = MINUS;
+		char2token['*'] = MULT;
+		char2token['/'] = DIV;
+		char2token['='] = BECOME;
+		char2token[','] = COMMA;
+		char2token[':'] = COLON;
+		char2token[';'] = SEMICOLON;
+		char2token['{'] = lBRACE;
+		char2token['}'] = rBRACE;
+		char2token['['] = lBRACK;
+		char2token[']'] = rBRACK;
+		char2token['('] = lPARE;
+		char2token[')'] = rPARE;
 		//initialize map from string to symbol
-		str2sym["const"] = CONST;
-		str2sym["int"] = INTSYM;
-		str2sym["char"] = CHARSYM;
-		str2sym["void"] = VOID;
-		str2sym["if"] = IF;
-		str2sym["else"] = ELSE;
-		str2sym["while"] = WHILE;
-		str2sym["switch"] = SWITCH;
-		str2sym["case"] = CASE;
-		str2sym["default"] = DEFAULT;
-		str2sym["return"] = RTN;
-		str2sym["main"] = MAIN;
+		str2token["const"] = CONST;
+		str2token["int"] = INTSYM;
+		str2token["char"] = CHARSYM;
+		str2token["void"] = VOID;
+		str2token["if"] = IF;
+		str2token["else"] = ELSE;
+		str2token["while"] = WHILE;
+		str2token["switch"] = SWITCH;
+		str2token["case"] = CASE;
+		str2token["default"] = DEFAULT;
+		str2token["return"] = RTN;
+		str2token["main"] = MAIN;
 		lineCount = 1;
 		c = 0;
 	};
-	Symbol nextSym();
-	const string& getIdent()
+	Token nextToken();
+	const string& getIdent() const
 	{
 		return ident;
 	}
-	int getNum()
+	int getNum() const
 	{
 		return num;
 	}
-	const string& getStr()
+	const string& getStr() const
 	{
 		return str;
 	}
 protected:
-	Symbol sym;
+	Token token;
 	string ident;
 	int num;
 	int c;
 	string str;
 	fstream& inputStream;
 	string line;
-	unordered_map<char, Symbol> char2sym;
-	unordered_map<string, Symbol> str2sym;
+	unordered_map<char, Token> char2token;
+	unordered_map<string, Token> str2token;
 	int lineCount;
 	int nextChar()
 	{

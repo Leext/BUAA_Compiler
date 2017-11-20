@@ -7,47 +7,47 @@ using std::string;
 using std::unordered_map;
 void test()
 {
-	unordered_map<Symbol, string> sym2str;
-	sym2str[PLUS] = "+";
-	sym2str[MINUS] = "-";
-	sym2str[MULT] = "*";
-	sym2str[DIV] = "/";
-	sym2str[BECOME] = "=";
-	sym2str[COMMA] = ",";
-	sym2str[COLON] = ":";
-	sym2str[SEMICOLON] = ";";
-	sym2str[lBRACE] = "{";
-	sym2str[rBRACE] = "}";
-	sym2str[lBRACK] = "[";
-	sym2str[rBRACK] = "]";
-	sym2str[lPARE] = "(";
-	sym2str[rPARE] = ")";
-	sym2str[LEQ] = "<=";
-	sym2str[LESS] = "<";
-	sym2str[GEQ] = ">=";
-	sym2str[GRT] = ">";
-	sym2str[CONST] = "const";
-	sym2str[INTSYM] = "int";
-	sym2str[CHARSYM] = "char";
-	sym2str[VOID] = "void";
-	sym2str[IF] = "if";
-	sym2str[ELSE] = "else";
-	sym2str[WHILE] = "while";
-	sym2str[SWITCH] = "switch";
-	sym2str[CASE] = "case";
-	sym2str[DEFAULT] = "default";
-	sym2str[RTN] = "return";
-	sym2str[MAIN] = "main";
+	unordered_map<Token, string> token2str;
+	token2str[PLUS] = "+";
+	token2str[MINUS] = "-";
+	token2str[MULT] = "*";
+	token2str[DIV] = "/";
+	token2str[BECOME] = "=";
+	token2str[COMMA] = ",";
+	token2str[COLON] = ":";
+	token2str[SEMICOLON] = ";";
+	token2str[lBRACE] = "{";
+	token2str[rBRACE] = "}";
+	token2str[lBRACK] = "[";
+	token2str[rBRACK] = "]";
+	token2str[lPARE] = "(";
+	token2str[rPARE] = ")";
+	token2str[LEQ] = "<=";
+	token2str[LESS] = "<";
+	token2str[GEQ] = ">=";
+	token2str[GRT] = ">";
+	token2str[CONST] = "const";
+	token2str[INTSYM] = "int";
+	token2str[CHARSYM] = "char";
+	token2str[VOID] = "void";
+	token2str[IF] = "if";
+	token2str[ELSE] = "else";
+	token2str[WHILE] = "while";
+	token2str[SWITCH] = "switch";
+	token2str[CASE] = "case";
+	token2str[DEFAULT] = "default";
+	token2str[RTN] = "return";
+	token2str[MAIN] = "main";
 	std::fstream is = std::fstream("test.txt", std::fstream::in);
 	Tokenizer tokenizer = Tokenizer(is);
-	Symbol sym;
+	Token token;
 	int num;
 	string ident;
 	while (1)
 	{
-		sym = tokenizer.nextSym();
-		std::cout << "sym " << sym << "  ";
-		switch (sym)
+		token = tokenizer.nextToken();
+		std::cout << "token " << token << "  ";
+		switch (token)
 		{
 		case IDENT:
 			std::cout << "ident " << tokenizer.getIdent() << std::endl;
@@ -62,7 +62,7 @@ void test()
             std::cout << "str " << tokenizer.getStr() << std::endl;
             break;
 		default:
-			std::cout << sym2str[sym] << std::endl;
+			std::cout << token2str[token] << std::endl;
 		}
 	}
 }

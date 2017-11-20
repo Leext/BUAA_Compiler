@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Tokenizer.h"
-Symbol Tokenizer::nextSym()
+Token Tokenizer::nextToken()
 {
 	try
 	{
@@ -23,52 +23,51 @@ Symbol Tokenizer::nextSym()
 		case ']':
 		case '(':
 		case ')':
-			sym = char2sym[c];
-			return sym;
+			return token = char2token[c];
 		case '<':
 			if (nextChar() == '=')
-				sym = LEQ;
+				token = LEQ;
 			else
 			{
 				backChar();
-				sym = LESS;
+				token = LESS;
 			}
-			return sym;
+			return token;
 		case '>':
 			if (nextChar() == '=')
-				sym = GEQ;
+				token = GEQ;
 			else
 			{
 				backChar();
-				sym = GRT;
+				token = GRT;
 			}
-			return sym;
+			return token;
 		case '\'':  //read char
 			nextChar();
-			sym = ALPHA;
+			token = ALPHA;
 			if (isChar(c))
 			{
 				num = c;
 				if (nextChar() == '\'')
-					return sym;
+					return token;
 				else
 					error();
 			}
 			else
 				error();
 			num = 0;
-			return sym;
+			return token;
 		case '\"':  //read string
 			str.clear();
 			for (nextChar(); isStrChar(c); nextChar())
 				str.push_back(c);
-			sym = STR;
+			token = STR;
 			if (c != '\"')
 			{
 				error();
 				num = 0;
 			}
-			return sym;
+			return token;
 		case '/':
 			nextChar();
 			if (c == '/')  //one line comment
@@ -92,10 +91,10 @@ Symbol Tokenizer::nextSym()
 			}
 			else
 			{
-				sym = DIV;
+				token = DIV;
 				backChar();
 			}
-			return sym;
+			return token;
 		case '\n':
 		case '\r':
 			goto start;
@@ -103,7 +102,7 @@ Symbol Tokenizer::nextSym()
 			if (isdigit(c)) // is non-zero digit
 			{
 				num = c - '0';
-				sym = NUM;
+				token = NUM;
 				if (c == '0')
 				{
 					if (isdigit(nextChar()))
@@ -121,12 +120,12 @@ Symbol Tokenizer::nextSym()
 				ident.clear();
 				ident.push_back(c);
 				for (nextChar(); isAlpha(c) || isdigit(c); nextChar())
-					ident.push_back(c);
+					ident.push_back(tolower(c));
 				backChar();
-				if (str2sym.find(ident) != str2sym.end())
-					sym = str2sym[ident];
+				if (str2token.find(ident) != str2token.end())
+					token = str2token[ident];
 				else
-					sym = IDENT;
+					token = IDENT;
 			}
 			else
 			{
@@ -134,7 +133,7 @@ Symbol Tokenizer::nextSym()
 				printf("%c\n", c);
 				goto start;
 			}
-			return sym;
+			return token;
 
 		}
 	}
@@ -143,5 +142,5 @@ Symbol Tokenizer::nextSym()
 		std::cout << e.what() << std::endl;
 		system("pause");
 	}
-    return sym;
+    return token;
 }
