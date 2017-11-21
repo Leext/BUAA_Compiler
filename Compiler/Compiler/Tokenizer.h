@@ -17,7 +17,9 @@ enum Token
 	RTN,
 	SCANF, PRINTF,
 	MAIN,
-	IDENT
+	IDENT,
+	TK_EOF,
+	ERROR
 };
 using std::string;
 using std::fstream;
@@ -56,27 +58,27 @@ public:
 		str2token["return"] = RTN;
 		str2token["main"] = MAIN;
 		lineCount = 1;
-		c = 0;
+		lastChar = ' ';
 	};
 	Token nextToken();
 	const string& getIdent() const
 	{
-		return ident;
+		return identifierStr;
 	}
 	int getNum() const
 	{
-		return num;
+		return numVal;
 	}
 	const string& getStr() const
 	{
-		return str;
+		return strConst;
 	}
 protected:
 	Token token;
-	string ident;
-	int num;
-	int c;
-	string str;
+	string identifierStr;
+	int numVal;
+	int lastChar;
+	string strConst;
 	fstream& inputStream;
 	string line;
 	unordered_map<char, Token> char2token;
@@ -84,25 +86,28 @@ protected:
 	int lineCount;
 	int nextChar()
 	{
-		if (c == '\n')
+		if (lastChar == '\n')
 		{
 			lineCount++;
 			line.clear();
 		}
-		if ((c = inputStream.get()) != EOF)
-		{
-			line.push_back(c);
-			return c;
-		}
-		throw std::exception("eof");
+		if ((lastChar = inputStream.get()) != EOF)
+			line.push_back(lastChar);
+		return lastChar;
 	}
 	void backChar()
 	{
-		if (c != '\n')
+		if (lastChar != '\n')
 		{
 			line.pop_back();
 			inputStream.unget();
 		}
+	}
+	void skipToChar(char ch)
+	{
+		do
+			nextChar();
+		while (lastChar != ch && lastChar != EOF);
 	}
 	void error()
 	{

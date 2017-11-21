@@ -46,6 +46,10 @@ void test()
 	while (1)
 	{
 		token = tokenizer.nextToken();
+		if (token == TK_EOF)
+			break;
+		if (token == ERROR)
+			continue;
 		std::cout << "token " << token << "  ";
 		switch (token)
 		{
@@ -58,11 +62,12 @@ void test()
 		case ALPHA:
 			std::cout << "char " << (char)tokenizer.getNum() << std::endl;
 			break;
-        case STR:
-            std::cout << "str " << tokenizer.getStr() << std::endl;
-            break;
+		case STR:
+			std::cout << "str " << tokenizer.getStr() << std::endl;
+			break;
 		default:
 			std::cout << token2str[token] << std::endl;
 		}
 	}
+	system("pause");
 }

@@ -2,145 +2,123 @@
 #include "Tokenizer.h"
 Token Tokenizer::nextToken()
 {
-	try
-	{
-	start:
+	while (isspace(lastChar))
 		nextChar();
-		while (c == ' ' || c == '\t')
-			nextChar();
-		switch (c)
+	switch (lastChar)
+	{
+	case '+':
+	case '-':
+	case '*':
+	case '=':
+	case ',':
+	case ':':
+	case ';':
+	case '{':
+	case '}':
+	case '[':
+	case ']':
+	case '(':
+	case ')':
+		token = char2token[lastChar];
+		nextChar();
+		return token;
+	case '<':
+		if (nextChar() == '=')
 		{
-		case '+':
-		case '-':
-		case '*':
-		case '=':
-		case ',':
-		case ':':
-		case ';':
-		case '{':
-		case '}':
-		case '[':
-		case ']':
-		case '(':
-		case ')':
-			return token = char2token[c];
-		case '<':
-			if (nextChar() == '=')
-				token = LEQ;
-			else
-			{
-				backChar();
-				token = LESS;
-			}
-			return token;
-		case '>':
-			if (nextChar() == '=')
-				token = GEQ;
-			else
-			{
-				backChar();
-				token = GRT;
-			}
-			return token;
-		case '\'':  //read char
+			token = LEQ;
 			nextChar();
-			token = ALPHA;
-			if (isChar(c))
+		}
+		else
+			token = LESS;
+		return token;
+	case '>':
+		if (nextChar() == '=')
+		{
+			token = GEQ;
+			nextChar();
+		}
+		else
+			token = GRT;
+		return token;
+	case '\'':  //read char
+		nextChar();  // eat '
+		if (isChar(lastChar))
+		{
+			numVal = lastChar;
+			if (nextChar() == '\'')
 			{
-				num = c;
-				if (nextChar() == '\'')
-					return token;
-				else
+				nextChar();  // eat '
+				return token = ALPHA;
+			}
+		}
+		// invalid char
+		error();
+		skipToChar(';'); // skip to ;
+		return token = ERROR;
+	case '\"':  //read string
+		strConst.clear();
+		for (nextChar(); isStrChar(lastChar); nextChar())
+			strConst.push_back(lastChar);
+		if (lastChar != '\"')
+		{
+			if (lastChar != '\n')
+				skipToChar('\n');
+			// expect right "
+			error();
+			return token = ERROR;
+		}
+		nextChar(); // eat "
+		return token = STR;
+	case '/':
+		nextChar();
+		if (lastChar == '/')  //one line comment
+		{
+			skipToChar('\n');
+			return nextToken();
+		}
+		else
+			return token = DIV;
+	case EOF:
+		return token = TK_EOF;
+	default:
+		if (isdigit(lastChar)) // is non-zero digit
+		{
+			numVal = lastChar - '0';
+			if (lastChar == '0')
+			{
+				if (isdigit(nextChar()))
+				{
+					// number with leading zero
 					error();
-			}
-			else
-				error();
-			num = 0;
-			return token;
-		case '\"':  //read string
-			str.clear();
-			for (nextChar(); isStrChar(c); nextChar())
-				str.push_back(c);
-			token = STR;
-			if (c != '\"')
-			{
-				error();
-				num = 0;
-			}
-			return token;
-		case '/':
-			nextChar();
-			if (c == '/')  //one line comment
-			{
-				try
-				{
-					while (nextChar() != '\n');
+					return token = ERROR;
 				}
-				catch (std::exception &e)
-				{
-				}
-				goto start;
-			}
-			else if (c == '*')  //multi lines comment
-			{
-				do
-				{
-					while (nextChar() != '*');
-				} while (nextChar() != '/');
-				goto start;
 			}
 			else
 			{
-				token = DIV;
-				backChar();
+				while (isdigit(nextChar()))
+					numVal = numVal * 10 + lastChar - '0';
 			}
-			return token;
-		case '\n':
-		case '\r':
-			goto start;
-		default:
-			if (isdigit(c)) // is non-zero digit
-			{
-				num = c - '0';
-				token = NUM;
-				if (c == '0')
-				{
-					if (isdigit(nextChar()))
-						error();
-				}
-				else
-				{
-					while (isdigit(nextChar()))
-						num = num * 10 + c - '0';
-				}
-				backChar();
-			}
-			else if (isAlpha(c))     // read keys and identifiers
-			{
-				ident.clear();
-				ident.push_back(c);
-				for (nextChar(); isAlpha(c) || isdigit(c); nextChar())
-					ident.push_back(tolower(c));
-				backChar();
-				if (str2token.find(ident) != str2token.end())
-					token = str2token[ident];
-				else
-					token = IDENT;
-			}
+			return token = NUM;
+		}
+		else if (isAlpha(lastChar))     // read keys and identifiers
+		{
+			identifierStr.clear();
+			identifierStr.push_back(tolower(lastChar));
+			for (nextChar(); isAlpha(lastChar) || isdigit(lastChar); nextChar())
+				identifierStr.push_back(tolower(lastChar));
+			if (str2token.find(identifierStr) != str2token.end())
+				token = str2token[identifierStr];
 			else
-			{
-				error();
-				printf("%c\n", c);
-				goto start;
-			}
+				token = IDENT;
 			return token;
-
+		}
+		else
+		{
+			// unknown char
+			error();
+			skipToChar('\n');
+			return token = ERROR;
 		}
 	}
-	catch (std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-		system("pause");
-	}
-    return token;
+	return token;
 }
