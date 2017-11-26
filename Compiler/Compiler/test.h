@@ -3,46 +3,47 @@
 #include <iostream>
 #include <fstream>
 #include "Tokenizer.h"
+#include <iomanip>
 using std::string;
 using std::unordered_map;
 void test()
 {
 	unordered_map<Token, string> token2str;
-	token2str[PLUS] = "+";
-	token2str[MINUS] = "-";
-	token2str[MULT] = "*";
-	token2str[DIV] = "/";
-	token2str[BECOME] = "=";
-	token2str[COMMA] = ",";
-	token2str[COLON] = ":";
-	token2str[SEMICOLON] = ";";
-	token2str[lBRACE] = "{";
-	token2str[rBRACE] = "}";
-	token2str[lBRACK] = "[";
-	token2str[rBRACK] = "]";
-	token2str[lPARE] = "(";
-	token2str[rPARE] = ")";
-	token2str[LEQ] = "<=";
-	token2str[LESS] = "<";
-	token2str[GEQ] = ">=";
-	token2str[GRT] = ">";
-	token2str[CONST] = "const";
-	token2str[INTSYM] = "int";
-	token2str[CHARSYM] = "char";
-	token2str[VOID] = "void";
-	token2str[IF] = "if";
-	token2str[ELSE] = "else";
-	token2str[WHILE] = "while";
-	token2str[SWITCH] = "switch";
-	token2str[CASE] = "case";
-	token2str[DEFAULT] = "default";
-	token2str[RTN] = "return";
-	token2str[MAIN] = "main";
+	token2str[PLUS] = "PLUS";
+	token2str[MINUS] = "MINUS";
+	token2str[MULT] = "MULT";
+	token2str[DIV] = "DIV";
+	token2str[BECOME] = "BECOME";
+	token2str[COMMA] = "COMMA";
+	token2str[COLON] = "COLON";
+	token2str[SEMICOLON] = "SEMICOLON";
+	token2str[lBRACE] = "lBRACE";
+	token2str[rBRACE] = "rBRACE";
+	token2str[lBRACK] = "lBRACK";
+	token2str[rBRACK] = "rBRACK";
+	token2str[lPARE] = "lPARE";
+	token2str[rPARE] = "rPARE";
+	token2str[LEQ] = "LEQ";
+	token2str[LESS] = "LESS";
+	token2str[GEQ] = "GEQ";
+	token2str[GRT] = "GRT";
+	token2str[CONST] = "CONST";
+	token2str[INTSYM] = "INTSYM";
+	token2str[CHARSYM] = "CHARSYM";
+	token2str[VOID] = "VOID";
+	token2str[IF] = "IF";
+	token2str[ELSE] = "ELSE";
+	token2str[WHILE] = "WHILE";
+	token2str[SWITCH] = "SWITCH";
+	token2str[CASE] = "CASE";
+	token2str[DEFAULT] = "DEFAULT";
+	token2str[RTN] = "RETURN";
+	token2str[MAIN] = "MAIN";
 	std::fstream is = std::fstream("test.txt", std::fstream::in);
 	Tokenizer tokenizer = Tokenizer(is);
 	Token token;
-	int num;
 	string ident;
+	int count = 0;
 	while (1)
 	{
 		token = tokenizer.nextToken();
@@ -50,23 +51,23 @@ void test()
 			break;
 		if (token == ERROR)
 			continue;
-		std::cout << "token " << token << "  ";
+		std::cout << std::setw(3) <<  count++ << "  ";
 		switch (token)
 		{
 		case IDENT:
-			std::cout << "ident " << tokenizer.getIdent() << std::endl;
+			std::cout << std::setw(10) << "IDENT" << std::setw(10) << tokenizer.getIdent() << std::endl;
 			break;
 		case NUM:
-			std::cout << "num " << tokenizer.getNum() << std::endl;
+			std::cout << std::setw(10) << "NUM" << std::setw(10) << tokenizer.getNum() << std::endl;
 			break;
 		case ALPHA:
-			std::cout << "char " << (char)tokenizer.getNum() << std::endl;
+			std::cout << std::setw(10) << "ALPHA" << std::setw(10) << (char)tokenizer.getNum() << std::endl;
 			break;
 		case STR:
-			std::cout << "str " << tokenizer.getStr() << std::endl;
+			std::cout << std::setw(10) << "STRING" << std::setw(10) << tokenizer.getStr() << std::endl;
 			break;
 		default:
-			std::cout << token2str[token] << std::endl;
+			std::cout << std::setw(10) << token2str[token] << std::endl;
 		}
 	}
 	system("pause");

@@ -3,8 +3,11 @@
 
 #include "stdafx.h"
 #include "test.h"
+#include "Parser.h"
 int main(int argc, char* argv[])
 {
 	test();
+    return 0;
 }
+
 

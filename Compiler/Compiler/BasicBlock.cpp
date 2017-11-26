@@ -6,7 +6,3 @@ BasicBlock::BasicBlock()
 {
 }
 
-
-BasicBlock::~BasicBlock()
-{
-}
