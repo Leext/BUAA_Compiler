@@ -6,7 +6,7 @@
 #include "Parser.h"
 int main(int argc, char* argv[])
 {
-	test();
+	tester::testParseVarAndFunc();
     return 0;
 }
 

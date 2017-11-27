@@ -1,29 +1,19 @@
-	if(x > 0)
-	{
-		int i;
-		i=0;
-		while(i<10)
-		{
-			d[i]=i;
-			printf(d[i]);
-			i = i+1;
-		}
-	}		
 const int a = +10;
-const char b = '?';//苟利国家生死以
+const char b = 'a';//苟利国家生死以
 
 int c ,d[10];
-char e = '_ ',f[20];
+char e = '_',f[20];
 
 int foo1(int x)
 {
 	const int a = +10;
 	const char b = 'a';
 	int c ,d[10];
+	int i;
 	char e = '_',f[10];
+
 	if(x > 0)
 	{
-		int i;
 		i=0;
 		while(i<10)
 		{
@@ -34,7 +24,6 @@ int foo1(int x)
 	}
 	else
 	{
-		char i;
 		i = 'z';
 		while(i>'z'-10)
 		{
@@ -55,7 +44,7 @@ void bar1(int x,int y)
 {
 	switch(y)
 	{
-		case -2:printf("-squre" ",-x*x);
+		case -2:printf("-square,-x*x);
 		case -3:printf("-cube",-x*x*x);
 		case 2:printf("square",x*x);
 		case 3:printf("cube",x*x*x);

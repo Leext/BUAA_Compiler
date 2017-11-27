@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "SymbolTable.h"
 #include "BasicBlock.h"
 #include "Quad.h"
@@ -8,11 +9,11 @@ class IRBuilder
 public:
 	IRBuilder();
 	~IRBuilder();
-	void createFunc();
-	void createGlobalVarDeclare();
-	void createGlobalConstDecalre();
-	void createVarDeclare();
-	void createConstDeclare();
+	bool createFunc();
+	bool createGlobalVarDeclare(Type type, string& name, int size = 0);
+	bool createGlobalConstDecalre();
+	bool createVarDeclare();
+	bool createConstDeclare();
 	void addStatement(Quad * quad);
 	int addString(const string& str);
 	const TableElement* lookupGlobal(const string& name);

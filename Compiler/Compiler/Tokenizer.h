@@ -73,6 +73,18 @@ public:
 	{
 		return strConst;
 	}
+	Token getToken() const
+	{
+		return token;
+	}
+	const string& getLine() const
+	{
+		return line;
+	}
+	int getLineCount()
+	{
+		return lineCount;
+	}
 protected:
 	Token token;
 	string identifierStr;

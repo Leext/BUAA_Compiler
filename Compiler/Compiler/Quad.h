@@ -1,13 +1,9 @@
 #pragma once
 #include "stdafx.h"
-class BasicBlock;
+#include "SymbolTable.h"
 using std::string;
 using std::vector;
 
-enum VarType
-{
-	VARINT, CHAR
-};
 
 class Quad
 {
@@ -44,18 +40,18 @@ public:
 class Constant : public Value
 {
 public:
-	Constant(int intVal) : Value(CONST), val(intVal), type(VARINT) {}
-	Constant(char charVal) : Value(CONST), val(charVal), type(CHAR) {}
+	Constant(int intVal) : Value(CONST), val(intVal), type(T_INT) {}
+	Constant(char charVal) : Value(CONST), val(charVal), type(T_CHAR) {}
 	const int val;
-	const VarType type;
+	const Type type;
 };
 
 class Var : public Value
 {
 public:
 	const string name;
-	const VarType type;
-	Var(const string& name, VarType type) : Value(VAR), name(name), type(type) {}
+	const Type type;
+	Var(const string& name, Type type) : Value(VAR), name(name), type(type) {}
 };
 
 class Operator : public Value
@@ -104,8 +100,8 @@ class Array : public Value
 public:
 	Value* offset;
 	const string name;
-	const VarType type;
-	Array(Value * const offset, const string& name, VarType type) :offset(offset), name(name), type(type), Value(ARRAY) {}
+	const Type type;
+	Array(Value * const offset, const string& name,Type type) :offset(offset), name(name), type(type), Value(ARRAY) {}
 };
 
 class Assign : public Instruction

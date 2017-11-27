@@ -16,6 +16,8 @@
 #include <vector>
 #include <list>
 #include <cctype>
+#include <unordered_set>
+#include "global.h"
 
 
 // TODO: reference additional headers your program requires here

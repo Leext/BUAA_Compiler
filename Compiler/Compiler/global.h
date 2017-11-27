@@ -1,0 +1,11 @@
+#pragma once
+class Tokenizer;
+class Parser;
+class SymbolTable;
+class TableElement;
+class IRBuilder;
+class BasicBlock;
+class Quad;
+class Value;
+class Instruction;
+class Function;

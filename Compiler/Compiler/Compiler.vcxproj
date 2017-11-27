@@ -73,7 +73,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasicBlock.h" />
+    <ClInclude Include="error.h" />
     <ClInclude Include="Generator.h" />
+    <ClInclude Include="global.h" />
     <ClInclude Include="IRBuilder.h" />
     <ClInclude Include="Optimizer.h" />
     <ClInclude Include="Parser.h" />
@@ -87,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="BasicBlock.cpp" />
     <ClCompile Include="Compiler.cpp" />
+    <ClCompile Include="error.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="IRBuilder.cpp" />
     <ClCompile Include="Optimizer.cpp" />

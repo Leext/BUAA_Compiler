@@ -4,16 +4,17 @@
 using std::unordered_map;
 using std::vector;
 using std::string;
+enum Type
+{
+	T_INT,
+	T_CHAR,
+	T_VOID,
+	T_STRING
+};
 class TableElement
 {
 public:
-	enum Type
-	{
-		VARINT,
-		CHAR,
-		VOID,
-		STRING
-	};
+
 
 	enum Kind
 	{
@@ -48,7 +49,7 @@ class Function
 public:
 	const string name;
 	SymbolTable symbolTable;
-	TableElement::Type type;
+	Type type;
 	list<BasicBlock*> body;
 	void addStatement(Quad *quad);
 	void insert(TableElement& tableElement);
