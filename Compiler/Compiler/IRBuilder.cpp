@@ -69,22 +69,22 @@ void IRBuilder::createCmpBr(Token tk, Value *cond1, Value *cond2, BasicBlock *Th
 {
 	switch (tk)
 	{
-	EQU:
+	case EQU:
 		tk = NEQ;
 		break;
-	NEQ:
+	case NEQ:
 		tk = EQU;
 		break;
-	LESS:
+	case LESS:
 		tk = GEQ;
 		break;
-	GEQ:
+	case GEQ:
 		tk = LESS;
 		break;
-	GRT:
+	case GRT:
 		tk = LEQ;
 		break;
-	LEQ:
+	case LEQ:
 		tk = GRT;
 		break;
 	}
