@@ -2,32 +2,55 @@
 #include "stdafx.h"
 enum Token
 {
-	PLUS, MINUS, MULT, DIV,
-	LESS, LEQ, GRT, GEQ, NEQ, EQU,
+	PLUS,
+	MINUS,
+	MULT,
+	DIV,
+	LESS,
+	LEQ,
+	GRT,
+	GEQ,
+	NEQ,
+	EQU,
 	BECOME,
-	ALPHA, NUM, STR,
-	CONST, INTSYM, CHARSYM, VOID,
-	COMMA, SEMICOLON, COLON,
-	lPARE, rPARE,
-	lBRACK, rBRACK,
-	lBRACE, rBRACE,
-	IF, ELSE,
+	ALPHA,
+	NUM,
+	STR,
+	CONST,
+	INTSYM,
+	CHARSYM,
+	VOID,
+	COMMA,
+	SEMICOLON,
+	COLON,
+	lPARE,
+	rPARE,
+	lBRACK,
+	rBRACK,
+	lBRACE,
+	rBRACE,
+	IF,
+	ELSE,
 	WHILE,
-	SWITCH, CASE, DEFAULT,
+	SWITCH,
+	CASE,
+	DEFAULT,
 	RTN,
-	SCANF, PRINTF,
+	SCANF,
+	PRINTF,
 	MAIN,
 	IDENT,
 	TK_EOF,
-	ERROR
+	ERROR,
+	TK_NULL
 };
 using std::string;
 using std::fstream;
 using std::unordered_map;
 class Tokenizer
 {
-public:
-	Tokenizer(fstream& inputStream) : inputStream(inputStream)
+  public:
+	Tokenizer(fstream &inputStream) : inputStream(inputStream)
 	{
 		//initialize map from single char to symbol
 		char2token['+'] = PLUS;
@@ -57,11 +80,13 @@ public:
 		str2token["default"] = DEFAULT;
 		str2token["return"] = RTN;
 		str2token["main"] = MAIN;
+		str2token["scanf"] = SCANF;
+		str2token["printf"] = PRINTF;
 		lineCount = 1;
 		lastChar = ' ';
 	};
 	Token nextToken();
-	const string& getIdent() const
+	const string &getIdent() const
 	{
 		return identifierStr;
 	}
@@ -69,7 +94,7 @@ public:
 	{
 		return numVal;
 	}
-	const string& getStr() const
+	const string &getStr() const
 	{
 		return strConst;
 	}
@@ -77,7 +102,7 @@ public:
 	{
 		return token;
 	}
-	const string& getLine() const
+	const string &getLine() const
 	{
 		return line;
 	}
@@ -85,13 +110,14 @@ public:
 	{
 		return lineCount;
 	}
-protected:
+
+  protected:
 	Token token;
 	string identifierStr;
 	int numVal;
 	int lastChar;
 	string strConst;
-	fstream& inputStream;
+	fstream &inputStream;
 	string line;
 	unordered_map<char, Token> char2token;
 	unordered_map<string, Token> str2token;
@@ -138,4 +164,3 @@ protected:
 		return (c >= 65 && c <= 90 || c >= 97 && c <= 122) || c == '_';
 	}
 };
-

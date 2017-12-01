@@ -9,7 +9,6 @@ Token Tokenizer::nextToken()
 	case '+':
 	case '-':
 	case '*':
-	case '=':
 	case ',':
 	case ':':
 	case ';':
@@ -21,6 +20,24 @@ Token Tokenizer::nextToken()
 	case ')':
 		token = char2token[lastChar];
 		nextChar();
+		return token;
+	case '!':
+		if (nextChar() == '=')
+		{
+			token = NEQ;
+			nextChar();
+		}
+		else
+			token = ERROR;
+		return token;
+	case '=':
+		if (nextChar() == '=')
+		{
+			token = EQU;
+			nextChar();
+		}
+		else
+			token = BECOME;
 		return token;
 	case '<':
 		if (nextChar() == '=')
@@ -40,14 +57,14 @@ Token Tokenizer::nextToken()
 		else
 			token = GRT;
 		return token;
-	case '\'':  //read char
-		nextChar();  // eat '
+	case '\'':		//read char
+		nextChar(); // eat '
 		if (isChar(lastChar))
 		{
 			numVal = lastChar;
 			if (nextChar() == '\'')
 			{
-				nextChar();  // eat '
+				nextChar(); // eat '
 				return token = ALPHA;
 			}
 		}
@@ -55,7 +72,7 @@ Token Tokenizer::nextToken()
 		error();
 		skipToChar(';'); // skip to ;
 		return token = ERROR;
-	case '\"':  //read string
+	case '\"': //read string
 		strConst.clear();
 		for (nextChar(); isStrChar(lastChar); nextChar())
 			strConst.push_back(lastChar);
@@ -71,7 +88,7 @@ Token Tokenizer::nextToken()
 		return token = STR;
 	case '/':
 		nextChar();
-		if (lastChar == '/')  //one line comment
+		if (lastChar == '/') //one line comment
 		{
 			skipToChar('\n');
 			return nextToken();
@@ -100,7 +117,7 @@ Token Tokenizer::nextToken()
 			}
 			return token = NUM;
 		}
-		else if (isAlpha(lastChar))     // read keys and identifiers
+		else if (isAlpha(lastChar)) // read keys and identifiers
 		{
 			identifierStr.clear();
 			identifierStr.push_back(tolower(lastChar));
