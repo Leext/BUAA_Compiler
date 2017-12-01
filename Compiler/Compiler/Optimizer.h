@@ -2,7 +2,6 @@
 class Optimizer
 {
 public:
-    Optimizer();
-    ~Optimizer();
+  Optimizer();
+  ~Optimizer();
 };
-

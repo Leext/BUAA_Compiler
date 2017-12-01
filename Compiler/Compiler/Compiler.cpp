@@ -4,10 +4,10 @@
 #include "stdafx.h"
 #include "test.h"
 #include "Parser.h"
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-	tester::testParseVarAndFunc();
+    //tester::testParseVarAndFunc();
+    tester::testParser();
+    system("pause");
     return 0;
 }
-
-

@@ -2,7 +2,6 @@
 class Generator
 {
 public:
-    Generator();
-    ~Generator();
+  Generator();
+  ~Generator();
 };
-

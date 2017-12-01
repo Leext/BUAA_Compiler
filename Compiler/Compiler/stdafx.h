@@ -14,10 +14,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <sstream>
 #include <list>
 #include <cctype>
 #include <unordered_set>
 #include "global.h"
-
 
 // TODO: reference additional headers your program requires here

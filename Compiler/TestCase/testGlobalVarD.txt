@@ -1,2 +1,6 @@
+const int a = +10;
+const char b = 'a';//苟利国家生死以
 int c ,d[10];
 char e ,f[20];
+int foo1(int x)
+{

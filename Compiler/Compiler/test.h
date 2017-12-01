@@ -12,7 +12,7 @@ using std::string;
 using std::unordered_map;
 class tester
 {
-public:
+  public:
 	static void test()
 	{
 		unordered_map<Token, string> token2str;
@@ -88,6 +88,14 @@ public:
 		auto errorHandler = ErrorHandler();
 		Parser parser = Parser(tokenizer, builder, errorHandler);
 		parser.parseProgram();
-
+	}
+	static void testParser()
+	{
+		std::fstream is = std::fstream("../TestCase/testZhufeng.txt", std::fstream::in);
+		Tokenizer tokenizer = Tokenizer(is);
+		IRBuilder builder = IRBuilder();
+		auto errorHandler = ErrorHandler();
+		Parser parser = Parser(tokenizer, builder, errorHandler);
+		parser.parseProgram();
 	}
 };
