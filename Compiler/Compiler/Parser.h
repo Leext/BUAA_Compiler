@@ -29,8 +29,10 @@ class Parser
 
 	unordered_set<Token> stmtBeginSet;
 	unordered_set<Token> cmpSet;
+	unordered_set<Token> typeSet;
 
 	void skipToToken(Token tk);
+	void skipToToken(Token t1, Token t2);
 	void skipToToken(unordered_set<Token> &skipSet);
 	Value *parseExpression();
 	Value *parseTerm();
@@ -84,6 +86,11 @@ class Parser
 		cmpSet.insert(LESS);
 		cmpSet.insert(LEQ);
 		cmpSet.insert(NEQ);
+
+		// initialize type token set
+		typeSet.insert(INTSYM);
+		typeSet.insert(CHARSYM);
+		typeSet.insert(VOID);
 	}
 	void startParse();
 };

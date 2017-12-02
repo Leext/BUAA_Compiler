@@ -110,7 +110,12 @@ class Tokenizer
 	{
 		return lineCount;
 	}
-
+	void skipToChar(char ch)
+	{
+		do
+			nextChar();
+		while (lastChar != ch && lastChar != EOF);
+	}
   protected:
 	Token token;
 	string identifierStr;
@@ -140,12 +145,6 @@ class Tokenizer
 			line.pop_back();
 			inputStream.unget();
 		}
-	}
-	void skipToChar(char ch)
-	{
-		do
-			nextChar();
-		while (lastChar != ch && lastChar != EOF);
 	}
 	void error()
 	{

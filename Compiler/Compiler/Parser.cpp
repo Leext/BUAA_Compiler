@@ -4,9 +4,14 @@
 
 void Parser::skipToToken(Token tk)
 {
-	while (tokenizer.nextToken() != tk)
-		;
-	token = tokenizer.getToken();
+	while (token != tk)
+		token = tokenizer.nextToken();
+}
+
+void Parser::skipToToken(Token t1, Token t2)
+{
+	while (token != t1 && token != t2)
+		token = tokenizer.nextToken();
 }
 
 void Parser::skipToToken(unordered_set<Token> &skipSet)
@@ -36,10 +41,7 @@ Value *Parser::parseExpression()
 		token = tokenizer.nextToken();
 		auto term2 = parseTerm();
 		if (term2 == nullptr)
-		{
-			/// todo skip
 			return nullptr;
-		}
 		term = new Operator(op, T_INT, term, term2);
 	}
 	return term;
@@ -57,10 +59,7 @@ Value *Parser::parseTerm()
 		token = tokenizer.nextToken();
 		auto factor2 = parseFactor();
 		if (factor2 == nullptr)
-		{
-			/// todo skip
 			return nullptr;
-		}
 		factor = new Operator(op, T_INT, factor, factor2);
 	}
 	return factor;
@@ -85,14 +84,16 @@ Value *Parser::parseFactor()
 				if (!match(lBRACK))
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_BRACKET_EXPECTED);
-					/// todo skip
+					return nullptr;
 				}
 				token = tokenizer.nextToken();
 				auto offset = parseExpression();
+				if (offset == nullptr)
+					return nullptr;
 				if (token != rBRACK)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACKET_EXPECTED);
-					/// todo skip
+					return nullptr;
 				}
 				token = tokenizer.nextToken();
 				return new Array(offset, te->name, te->type);
@@ -117,7 +118,7 @@ Value *Parser::parseFactor()
 				if (!match(lPARE))
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-					/// todo skip
+					return nullptr;
 				}
 				do
 				{
@@ -130,7 +131,7 @@ Value *Parser::parseFactor()
 				if (token != rPARE)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-					/// todo skip
+					return nullptr;
 				}
 			}
 			token = tokenizer.nextToken();
@@ -191,13 +192,18 @@ void Parser::parseStatement()
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_BRACKET_EXPECTED);
 					/// todo skip
+					goto error;
 				}
 				token = tokenizer.nextToken();
 				auto offset = parseExpression();
+				if (offset == nullptr)
+					goto error;
+				std::cout << "expression " << offset->toString() << std::endl;
 				if (token != rBRACK)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACKET_EXPECTED);
 					/// todo skip
+					goto error;
 				}
 				variable = new Array(offset, te->name, te->type);
 			}
@@ -209,15 +215,14 @@ void Parser::parseStatement()
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), ASSIGN_EXPECTED);
 				/// todo skip
+				goto error;
 			}
+			std::cout << "this is an assign statement\n";
 			token = tokenizer.nextToken();
 			auto val = parseExpression();
 			if (val == nullptr)
-			{
-				/// todo skip
-			}
-			std::cout << val->toString() << std::endl;
-			std::cout << "this is an assign statement\n";
+				goto error;
+			std::cout << "expression " << val->toString() << std::endl;
 			builder.addStatement(new Assign(variable, val));
 		}
 		else if ((function = builder.lookupFunc(identifier)) != nullptr)
@@ -229,37 +234,34 @@ void Parser::parseStatement()
 				if (!match(lPARE))
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-					/// todo skip
+					goto error;
 				}
 				do
 				{
 					token = tokenizer.nextToken();
 					auto e = parseExpression();
 					if (e == nullptr)
-					{
-						/// skip
-						return;
-					}
+						goto error;
 					args.push_back(e);
 				} while (token == COMMA);
 				if (token != rPARE)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-					/// todo skip
+					goto error;
 				}
 			}
 			/// todo check args
 			if (args.size() != function->args.size())
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNMATCHED_ARGUMENT_LIST);
-				/// todo skip
+				goto error;
 			}
 			for (int i = 0; i < args.size(); i++)
 			{
 				if (args[i]->type == T_INT && function->args[i]->type == T_CHAR)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNMATCHED_ARGUMENT_LIST);
-					/// todo skip
+					goto error;
 				}
 			}
 			if (function->type == T_VOID)
@@ -271,6 +273,7 @@ void Parser::parseStatement()
 		else
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNDEFINED_IDENTIFIER, identifier);
+			goto error;
 		}
 		break;
 	case SCANF:
@@ -291,7 +294,6 @@ void Parser::parseStatement()
 		if (token != rBRACE)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACE_EXPECTED);
-			/// todo skip
 		}
 		token = tokenizer.nextToken();
 		return;
@@ -299,8 +301,9 @@ void Parser::parseStatement()
 	if (token != SEMICOLON)
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), SEMICOLON_EXPECTED);
-		/// todo skip
 	}
+error:
+	skipToToken(SEMICOLON);
 	token = tokenizer.nextToken();
 }
 
@@ -322,6 +325,9 @@ void Parser::parseCompStatement()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 			///TODO skip
+			skipToToken(SEMICOLON);
+			token = tokenizer.nextToken();
+			continue;
 		}
 		identifier = tokenizer.getIdent();
 		token = tokenizer.nextToken();
@@ -333,14 +339,9 @@ void Parser::parseCompStatement()
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 		///todo skip
+		skipToToken(stmtBeginSet);
 	}
 	parseStatements();
-	//if (token != rBRACE)
-	//{
-	//	error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACE_EXPECTED);
-	//	///todo skip
-	//}
-	//token = tokenizer.nextToken();
 }
 
 /**
@@ -349,7 +350,6 @@ void Parser::parseCompStatement()
 void Parser::parseFunction()
 {
 	haveReadFunction = true;
-	bool readMain = false;
 	if (token == lBRACE)
 	{
 		if (!builder.createFunc(type, identifier))
@@ -376,7 +376,7 @@ void Parser::parseFunction()
 		// main function
 		if (identifier == "main")
 		{
-			readMain = true;
+			haveReadMain = true;
 			if ((token = tokenizer.nextToken()) != rPARE)
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
@@ -401,14 +401,14 @@ void Parser::parseFunction()
 				if (token != INTSYM && token != CHARSYM)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
-					///TODO skip
+					skipToToken(rPARE);
 					continue;
 				}
 				type = (token == INTSYM) ? T_INT : T_CHAR;
 				if ((token = tokenizer.nextToken()) != IDENT)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
-					///TODO skip
+					skipToToken(rPARE);
 				}
 				identifier = tokenizer.getIdent();
 				token = tokenizer.nextToken();
@@ -429,32 +429,29 @@ void Parser::parseFunction()
 				else //error
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
-					///TODO skip
+					skipToToken(rPARE);
 				}
 			} // while
 		}
 	parse_body:
-		if (token == lBRACE)
-		{
-			token = tokenizer.nextToken();
-			parseCompStatement();
-			if (token != rBRACE)
-			{
-				error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACE_EXPECTED);
-				///TODO skip
-			}
-			token = tokenizer.nextToken();
-			if (readMain)
-				throw 1;
-		}
-		else
-		{
+		if (token != lBRACE)
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
+
+		token = tokenizer.nextToken();
+		parseCompStatement();
+		if (token != rBRACE)
+		{
+			error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACE_EXPECTED);
 			///TODO skip
 		}
+		token = tokenizer.nextToken();
+		if (haveReadMain)
+			throw 1;
+
 	}
 	else //error
 	{
+		skipToToken(typeSet);
 	}
 }
 
@@ -470,6 +467,7 @@ void Parser::parseConstDeclare()
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), TYPE_IDENTIFIER_EXPECTED);
 		///todo skip
+		goto end;
 	}
 	type = (token == INTSYM ? T_INT : T_CHAR);
 	do
@@ -478,12 +476,14 @@ void Parser::parseConstDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 			///TODO skip
+			goto end;
 		}
 		identifier = tokenizer.getIdent();
 		if (!match(BECOME))
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), EQUAL_EXPECTED);
 			///TODO skip
+			goto end;
 		}
 		if (type == T_INT)
 		{
@@ -501,11 +501,13 @@ void Parser::parseConstDeclare()
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), NUM_EXPECTED);
 				///TODO skip
+				goto end;
 			}
 			if (readSign && tokenizer.getNum() == 0)
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_SIGN);
 				///TODO skip
+				goto end;
 			}
 
 			if (!builder.createConstDecalre(type, identifier, sign * tokenizer.getNum()))
@@ -520,6 +522,7 @@ void Parser::parseConstDeclare()
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), ALPHA_EXPECTED);
 				///TODO skip
+				goto end;
 			}
 			if (!builder.createConstDecalre(type, identifier, tokenizer.getNum()))
 			{
@@ -527,13 +530,14 @@ void Parser::parseConstDeclare()
 				///todo skip
 			}
 		}
-		token = tokenizer.nextToken();
-	} while (token == COMMA);
+	} while ((token = tokenizer.nextToken()) == COMMA);
 	if (token != SEMICOLON)
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), SEMICOLON_EXPECTED);
 		///TODO skip
 	}
+end:
+	skipToToken(SEMICOLON);
 	token = tokenizer.nextToken();
 }
 
@@ -551,6 +555,7 @@ void Parser::parseVarDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 			///TODO skip
+			goto end;
 		}
 		identifier = tokenizer.getIdent();
 		token = tokenizer.nextToken();
@@ -565,11 +570,13 @@ void Parser::parseVarDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), POSITIVE_INT_EXPECTED);
 			///TODO skip
+			goto end;
 		}
 		if ((token = tokenizer.nextToken()) != rBRACK)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 			///TODO skip
+			goto end;
 		}
 		token = tokenizer.nextToken();
 		if (token == COMMA || token == SEMICOLON)
@@ -585,6 +592,7 @@ void Parser::parseVarDeclare()
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 					///TODO skip
+					goto end;
 				}
 				identifier = tokenizer.getIdent();
 				token = tokenizer.nextToken();
@@ -600,19 +608,16 @@ void Parser::parseVarDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_ALREADY_DEFINED, identifier);
 			///TODO skip
+			goto end;
 		}
 		token = tokenizer.nextToken();
 	}
 	else //error
 	{
+	end:
+		skipToToken(SEMICOLON);
+		token = tokenizer.nextToken();
 	}
-
-	//skip:
-	//	auto& skipSet = unordered_set<Token>();
-	//	skipSet.insert(INTSYM);
-	//	skipSet.insert(CHARSYM);
-	//	skipSet.insert(VOID);
-	//	skipToToken(skipSet);
 }
 
 void Parser::parseVarAndFuncDeclare()
@@ -624,6 +629,7 @@ void Parser::parseVarAndFuncDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 			///TODO skip
+			goto error;
 		}
 		identifier = tokenizer.getIdent();
 		token = tokenizer.nextToken();
@@ -632,6 +638,7 @@ void Parser::parseVarAndFuncDeclare()
 			if (identifier == "main")
 			{
 				///todo  wrong main function type
+				error.report(tokenizer.getLineCount(), tokenizer.getLine(), WRONG_MAIN_TYPE);
 			}
 			parseFunction();
 		}
@@ -648,6 +655,7 @@ void Parser::parseVarAndFuncDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 			///TODO skip
+			goto error;
 		}
 	}
 	else if (token == VOID)
@@ -658,6 +666,7 @@ void Parser::parseVarAndFuncDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
 			///TODO skip
+			goto error;
 		}
 		identifier = tokenizer.getIdent();
 		token = tokenizer.nextToken();
@@ -665,11 +674,14 @@ void Parser::parseVarAndFuncDeclare()
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 			///todo skip
+			goto error;
 		}
 		parseFunction();
 	}
 	else //error
 	{
+	error:
+		skipToToken(typeSet);
 	}
 }
 
@@ -824,16 +836,14 @@ void Parser::parseIf()
 	if (!match(lPARE))
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-		///todo skip
+		goto error;
 	}
 	token = tokenizer.nextToken();
 	Value *cond1 = parseExpression();
 	Value *cond2 = nullptr;
 
 	if (cond1 == nullptr)
-	{
-		/// todo skip
-	}
+		goto error;
 
 	Token cmpToken = TK_NULL;
 	if (cmpSet.find(token) != cmpSet.end())
@@ -842,9 +852,7 @@ void Parser::parseIf()
 		token = tokenizer.nextToken();
 		cond2 = parseExpression();
 		if (cond2 == nullptr)
-		{
-			/// todo skip
-		}
+			goto error;
 	}
 	if (token != rPARE)
 	{
@@ -863,7 +871,7 @@ void Parser::parseIf()
 	if (stmtBeginSet.find(token) == stmtBeginSet.end())
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
-		///todo skip
+		goto error;
 	}
 	builder.setInsertPoint(Then);
 	parseStatement();
@@ -872,16 +880,19 @@ void Parser::parseIf()
 	if (token != ELSE)
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), ELSE_EXPECTED);
-		///todo skip
+		goto error;
 	}
 	token = tokenizer.nextToken();
 	if (stmtBeginSet.find(token) == stmtBeginSet.end())
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
-		///todo skip
+		goto error;
 	}
 	builder.setInsertPoint(Else);
 	parseStatement();
+	return;
+error:
+	token = tokenizer.nextToken();
 }
 
 void Parser::parseWhile()
@@ -892,16 +903,14 @@ void Parser::parseWhile()
 	if (!match(lPARE))
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-		///todo skip
+		goto error;
 	}
 	token = tokenizer.nextToken();
 	Value *cond1 = parseExpression();
 	Value *cond2 = nullptr;
 
 	if (cond1 == nullptr)
-	{
-		/// todo skip
-	}
+		goto error;
 
 	Token cmpToken = TK_NULL;
 	if (cmpSet.find(token) != cmpSet.end())
@@ -910,14 +919,12 @@ void Parser::parseWhile()
 		token = tokenizer.nextToken();
 		cond2 = parseExpression();
 		if (cond2 == nullptr)
-		{
-			/// todo skip
-		}
+			goto error;
 	}
 	if (token != rPARE)
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-		///todo skip
+		goto error;
 	}
 
 	auto cond = builder.createBasicBlock();
@@ -935,41 +942,40 @@ void Parser::parseWhile()
 	if (stmtBeginSet.find(token) == stmtBeginSet.end())
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
-		///todo skip
+		goto error;
 	}
 	builder.setInsertPoint(body);
 	parseStatement();
 
 	builder.setInsertPoint(next);
+	return;
+error:
+	token = tokenizer.nextToken();
 }
 
 void Parser::parseScanf()
 {
 	std::cout << "this is a scanf\n";
 	if (!match(lPARE))
-	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-		///todo skip
-	}
 	vector<Var *> args;
 	do
 	{
 		if (!match(IDENT))
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
-			///todo skip
+			skipToToken(COMMA, rPARE);
+			continue;
 		}
 		identifier = tokenizer.getIdent();
 		const TableElement *te;
 		if ((te = builder.lookup(identifier)) == nullptr)
-		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNDEFINED_IDENTIFIER, identifier);
-			///todo skip
-		}
 		if (te->kind == K_CONST || te->kind == K_ARRAY)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), VARIABLE_EXPECTED);
-			///todo skip
+			skipToToken(COMMA, rPARE);
+			continue;
 		}
 		args.push_back(new Var(identifier, te->type));
 		token = tokenizer.nextToken();
@@ -977,7 +983,8 @@ void Parser::parseScanf()
 	if (token != rPARE)
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-		///todo skip
+		skipToToken(SEMICOLON);
+		return;
 	}
 	builder.addStatement(new Scanf(args));
 	token = tokenizer.nextToken();
@@ -987,10 +994,7 @@ void Parser::parsePrintf()
 {
 	std::cout << "this is a printf\n";
 	if (!match(lPARE))
-	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-		///todo skip
-	}
 	int strIndex;
 	Value *val;
 	token = tokenizer.nextToken();
@@ -1002,14 +1006,12 @@ void Parser::parsePrintf()
 			token = tokenizer.nextToken();
 			val = parseExpression();
 			if (val == nullptr)
-			{
-				///todo skip
-				return;
-			}
+				skipToToken(rPARE);
 			if (token != rPARE)
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-				///todo skip
+				skipToToken(SEMICOLON);
+				return;
 			}
 			builder.addStatement(new Printf(strIndex, val));
 		}
@@ -1020,7 +1022,8 @@ void Parser::parsePrintf()
 		else
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-			///todo skip
+			skipToToken(SEMICOLON);
+			return;
 		}
 	}
 	else
@@ -1028,13 +1031,14 @@ void Parser::parsePrintf()
 		val = parseExpression();
 		if (val == nullptr)
 		{
-			///todo skip
+			skipToToken(SEMICOLON);
 			return;
 		}
 		if (token != rPARE)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-			///todo skip
+			skipToToken(SEMICOLON);
+			return;
 		}
 		builder.addStatement(new Printf(val));
 	}
@@ -1077,7 +1081,7 @@ void Parser::parseReturn()
 		if (token != SEMICOLON)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), INVALID_RETURN);
-			///todo skip
+			skipToToken(SEMICOLON);
 		}
 		builder.addStatement(new Return());
 	}
@@ -1090,23 +1094,29 @@ void Parser::parseReturn()
 			val = parseExpression();
 			if (val == nullptr)
 			{
-				///todo skip
+				skipToToken(SEMICOLON);
+				return;
 			}
 			if (token != rPARE)
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
-				///todo skip
+				skipToToken(SEMICOLON);
+				return;
+
 			}
 			if (func->type == T_CHAR && val->type == T_INT)
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNMATCHED_RETURN_TYPE);
+				skipToToken(SEMICOLON);
+				return;
 			}
 			builder.addStatement(new Return(val));
 		}
 		else
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
-			///todo skip
+			skipToToken(SEMICOLON);
+			return;
 		}
 		token = tokenizer.nextToken();
 	}

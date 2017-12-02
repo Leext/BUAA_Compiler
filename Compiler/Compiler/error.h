@@ -29,7 +29,8 @@ enum ErrorType
 	VARIABLE_EXPECTED,
 	INVALID_RETURN,
 	UNMATCHED_RETURN_TYPE,
-	UNMATCHED_ARGUMENT_LIST
+	UNMATCHED_ARGUMENT_LIST,
+	WRONG_MAIN_TYPE
 };
 class ErrorHandler
 {
@@ -68,6 +69,7 @@ class ErrorHandler
 		errorInfo[INVALID_RETURN] = "invalid return statement";
 		errorInfo[UNMATCHED_RETURN_TYPE] = "return type does not match";
 		errorInfo[UNMATCHED_ARGUMENT_LIST] = "argument list dose not match";
+		errorInfo[WRONG_MAIN_TYPE] = "wrong type of main function";
 	}
 
 	void report(int lineNum, const std::string &line, ErrorType type)

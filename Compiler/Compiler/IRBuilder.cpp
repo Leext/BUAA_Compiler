@@ -97,6 +97,7 @@ void IRBuilder::createCmpBr(Value *cond, BasicBlock *Then, BasicBlock *Else)
 
 void IRBuilder::createGoto(Label *label)
 {
+	insertBlock->add(new Goto(label));
 }
 
 BasicBlock *IRBuilder::getLastBasicBlock()
