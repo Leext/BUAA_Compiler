@@ -67,32 +67,35 @@ bool IRBuilder::createConstDecalre(Type type, string &name, int val)
 // jump when not satisfy
 void IRBuilder::createCmpBr(Token tk, Value *cond1, Value *cond2, BasicBlock *Then, BasicBlock *Else)
 {
+	Opcode op;
 	switch (tk)
 	{
 	case EQU:
-		tk = NEQ;
+		op = Op_BNE;
 		break;
 	case NEQ:
-		tk = EQU;
+		op = Op_BEQ;
 		break;
 	case LESS:
-		tk = GEQ;
+		op = Op_BGE;
 		break;
 	case GEQ:
-		tk = LESS;
+		op = Op_BLT;
 		break;
 	case GRT:
-		tk = LEQ;
+		op = Op_BLE;
 		break;
 	case LEQ:
-		tk = GRT;
+		op = Op_BGT;
 		break;
 	}
+	insertBlock->add(new CmpBr(op, cond1, cond1, new Label(Else)));
 }
 
 // jump when not satisfy
 void IRBuilder::createCmpBr(Value *cond, BasicBlock *Then, BasicBlock *Else)
 {
+	insertBlock->add(new CmpBr(Op_BEQZ, cond, new Label(Else)));
 }
 
 void IRBuilder::createGoto(Label *label)
