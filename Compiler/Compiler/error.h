@@ -30,7 +30,8 @@ enum ErrorType
 	INVALID_RETURN,
 	UNMATCHED_RETURN_TYPE,
 	UNMATCHED_ARGUMENT_LIST,
-	WRONG_MAIN_TYPE
+	WRONG_MAIN_TYPE,
+	CHANGE_CONST_VALUE
 };
 class ErrorHandler
 {
@@ -70,6 +71,7 @@ class ErrorHandler
 		errorInfo[UNMATCHED_RETURN_TYPE] = "return type does not match";
 		errorInfo[UNMATCHED_ARGUMENT_LIST] = "argument list dose not match";
 		errorInfo[WRONG_MAIN_TYPE] = "wrong type of main function";
+		errorInfo[CHANGE_CONST_VALUE] = "cannot change const value";
 	}
 
 	void report(int lineNum, const std::string &line, ErrorType type)

@@ -217,6 +217,10 @@ void Parser::parseStatement()
 				/// todo skip
 				goto error;
 			}
+			if (te->kind == K_CONST)
+			{
+				error.report(tokenizer.getLineCount(), tokenizer.getLine(), CHANGE_CONST_VALUE);
+			}
 			std::cout << "this is an assign statement\n";
 			token = tokenizer.nextToken();
 			auto val = parseExpression();
@@ -946,6 +950,7 @@ void Parser::parseWhile()
 	}
 	builder.setInsertPoint(body);
 	parseStatement();
+	builder.createGoto(new Label(cond));
 
 	builder.setInsertPoint(next);
 	return;
