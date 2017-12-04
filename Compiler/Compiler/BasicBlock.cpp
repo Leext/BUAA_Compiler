@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "BasicBlock.h"
 
+int BasicBlock::count = 0;
+
 void BasicBlock::add(Quad *quad)
 {
 	if (quad->opcode == Op_LABEL)

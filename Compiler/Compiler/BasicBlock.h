@@ -8,7 +8,9 @@ using std::list;
 class BasicBlock
 {
   public:
-	BasicBlock()
+	static int count;
+	const int id;
+	BasicBlock() : id(count++)
 	{
 		next = nullptr;
 	}
