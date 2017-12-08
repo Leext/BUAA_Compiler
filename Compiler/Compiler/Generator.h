@@ -21,7 +21,7 @@ protected:
 	void generateFunction(Function * function);
 	void generateFunctionCall();
 	void convertQuad(Quad* quad);
-	void loadValue(Function* function, Quad* quad, string &reg);
+	void loadValue(Function* function, Quad* quad, string &reg,int temp=0);
 	void storeValue(Function* function, Quad* quad, string &reg);
 	void storeValueArray(Function* function, Quad* quad, string &reg,string& freeReg);
 	void print(fstream &output);

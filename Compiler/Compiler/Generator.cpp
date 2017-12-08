@@ -156,13 +156,14 @@ void Generator::generateFunction(Function * function)
 			{
 				auto op = static_cast<FunctCall*>(*quad);
 				// pass args
-				code.push_back("addiu $sp $sp -" + to_string((long long)(op->args.size() << 2)));
+				int temp = (op->args.size() << 2);
+				code.push_back("addiu $sp $sp -" + to_string((long long)temp));
 				int i;
 				for (i = 0; i < 4 && i < op->args.size(); i++)
-					loadValue(function, op->args[i], string("$a" + to_string((long long)i)));
+					loadValue(function, op->args[i], string("$a" + to_string((long long)i)), temp);
 				for (; i < op->args.size(); i++)
 				{
-					loadValue(function, op->args[i], string("$t0"));
+					loadValue(function, op->args[i], string("$t0"), temp);
 					code.push_back("sw $t0 " + to_string((long long)(i << 2)) + "($sp)");
 				}
 
@@ -180,6 +181,13 @@ void Generator::generateFunction(Function * function)
 					code.push_back("lw $t" + to_string((long long)i) + " " + to_string((long long)(i << 2)) + "($sp)");
 				code.push_back("addiu $sp $sp 32");
 				code.push_back("addiu $sp $sp " + to_string((long long)(op->args.size() << 2)));
+
+				// restore $a0~a3
+				for (int i = 0; i < function->args.size() && i < 4; i++)
+				{
+					int tmp = (i << 2) - offset;
+					code.push_back("lw $a" + to_string((long long)i) + " " + to_string((long long)tmp) + "($fp)");
+				}
 
 				storeValue(function, *quad, string("$v0"));
 				break;
@@ -188,13 +196,14 @@ void Generator::generateFunction(Function * function)
 			{
 				auto op = static_cast<VoidCall*>(*quad);
 				// pass args
-				code.push_back("addiu $sp $sp -" + to_string((long long)(op->args.size() << 2)));
+				int temp = (op->args.size() << 2);
+				code.push_back("addiu $sp $sp -" + to_string((long long)temp));
 				int i;
 				for (i = 0; i < 4 && i < op->args.size(); i++)
-					loadValue(function, op->args[i], string("$a" + to_string((long long)i)));
+					loadValue(function, op->args[i], string("$a" + to_string((long long)i)), temp);
 				for (; i < op->args.size(); i++)
 				{
-					loadValue(function, op->args[i], string("$t0"));
+					loadValue(function, op->args[i], string("$t0"), temp);
 					code.push_back("sw $t0 " + to_string((long long)(i << 2)) + "($sp)");
 				}
 
@@ -213,6 +222,12 @@ void Generator::generateFunction(Function * function)
 				code.push_back("addiu $sp $sp 32");
 				code.push_back("addiu $sp $sp " + to_string((long long)(op->args.size() << 2)));
 
+				// restore $a0~a3
+				for (int i = 0; i < function->args.size() && i < 4; i++)
+				{
+					int tmp = (i << 2) - offset;
+					code.push_back("lw $a" + to_string((long long)i) + " " + to_string((long long)tmp) + "($fp)");
+				}
 				break;
 			}
 			case Op_ASSIGN:
@@ -437,7 +452,7 @@ void Generator::generateFunction(Function * function)
 	code.push_back("nop");
 }
 
-void Generator::loadValue(Function* function, Quad * quad, string & reg)
+void Generator::loadValue(Function* function, Quad * quad, string & reg, int temp)
 {
 	if (reg.back() != ' ')
 		reg += ' ';
@@ -472,7 +487,7 @@ void Generator::loadValue(Function* function, Quad * quad, string & reg)
 	}
 	else
 	{
-		code.push_back(instr + reg + to_string((long long)tempOffset[quad]) + "($sp)");
+		code.push_back(instr + reg + to_string((long long)(tempOffset[quad] + temp)) + "($sp)");
 	}
 }
 
