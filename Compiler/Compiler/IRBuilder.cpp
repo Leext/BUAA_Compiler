@@ -89,18 +89,18 @@ void IRBuilder::createCmpBr(Token tk, Value *cond1, Value *cond2, BasicBlock *Th
 		op = Op_BGT;
 		break;
 	}
-	insertBlock->add(new CmpBr(op, cond1, cond1, new Label(Else)));
+	insertBlock->addu(new CmpBr(op, cond1, cond2, new Label(Else)));
 }
 
 // jump when not satisfy
 void IRBuilder::createCmpBr(Value *cond, BasicBlock *Then, BasicBlock *Else)
 {
-	insertBlock->add(new CmpBr(Op_BEQZ, cond, new Label(Else)));
+	insertBlock->addu(new CmpBr(Op_BEQZ, cond, new Label(Else)));
 }
 
 void IRBuilder::createGoto(Label *label)
 {
-	insertBlock->add(new Goto(label));
+	insertBlock->addu(new Goto(label));
 }
 
 BasicBlock *IRBuilder::getLastBasicBlock()
@@ -121,7 +121,7 @@ void IRBuilder::setInsertPoint(BasicBlock *bb)
 
 void IRBuilder::addStatement(Quad *quad)
 {
-	insertBlock->add(quad);
+	insertBlock->addu(quad);
 }
 
 int IRBuilder::addString(const string &str)

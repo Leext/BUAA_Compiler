@@ -49,7 +49,7 @@ public:
 class Instruction : public Quad
 {
 public:
-	Instruction(Opcode) : Quad(opcode) {}
+	Instruction(Opcode opcode) : Quad(opcode) {}
 };
 
 class Label : public Instruction

@@ -3,7 +3,7 @@
 
 int BasicBlock::count = 0;
 
-void BasicBlock::add(Quad *quad)
+void BasicBlock::addu(Quad *quad)
 {
 	if (quad->opcode == Op_LABEL)
 		static_cast<Label *>(quad)->controller = this;

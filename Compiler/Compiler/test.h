@@ -108,8 +108,8 @@ class tester
 		Parser parser = Parser(tokenizer, builder, errorHandler);
 		parser.parseProgram();
 		Generator generator = Generator(&builder);
-		generator.generateData();
-		for (auto i = generator.code.begin(); i != generator.code.end(); i++)
-			std::cout << *i << std::endl;
+		generator.generate();
+		auto out = std::fstream("output.txt", std::fstream::out);
+		generator.print(out);
 	}
 };

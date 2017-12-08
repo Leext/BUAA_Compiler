@@ -15,6 +15,7 @@ protected:
 	unordered_map<Quad*, int> tempOffset;    // relative to $fp
 	unordered_map<BasicBlock*, int> bb2label;
 	int labelCount;
+	void generate();
 	void generateData();
 	void generateText();
 	void generateFunction(Function * function);
@@ -23,5 +24,5 @@ protected:
 	void loadValue(Function* function, Quad* quad, string &reg);
 	void storeValue(Function* function, Quad* quad, string &reg);
 	void storeValueArray(Function* function, Quad* quad, string &reg,string& freeReg);
-
+	void print(fstream &output);
 };

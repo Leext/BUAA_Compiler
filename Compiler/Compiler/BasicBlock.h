@@ -20,7 +20,7 @@ class BasicBlock
 	}
 	BasicBlock *next;
 	list<Quad *> quads;
-	void add(Quad *quad);
+	void addu(Quad *quad);
 };
 
 #endif // !__BASICBLOCK_H_

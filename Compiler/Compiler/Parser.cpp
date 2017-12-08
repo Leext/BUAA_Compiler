@@ -135,7 +135,9 @@ Value *Parser::parseFactor()
 				}
 			}
 			token = tokenizer.nextToken();
-			return new FunctCall(func->name, func->type, args);
+			auto ret = new FunctCall(func->name, func->type, args);
+			builder.addStatement(ret);
+			return ret;
 		}
 		break;
 	case lPARE:
@@ -325,6 +327,7 @@ void Parser::parseCompStatement()
 		parseConstDeclare();
 	while (token == INTSYM || token == CHARSYM)
 	{
+		type = (token == INTSYM) ? T_INT : T_CHAR;
 		if ((token = tokenizer.nextToken()) != IDENT)
 		{
 			error.report(tokenizer.getLineCount(), tokenizer.getLine(), IDENTIFIER_EXPECTED);
@@ -787,7 +790,7 @@ void Parser::parseSwitch()
 
 		auto caseCmp = builder.createBasicBlock();
 		auto cmpLabel = new Label(caseCmp);
-		caseCmp->add(new CmpBr(Op_BEQ, cond, cmpConst, bodyLabel)); // branch to case body if equal
+		caseCmp->addu(new CmpBr(Op_BEQ, cond, cmpConst, bodyLabel)); // branch to case body if equal
 		caseCmps.push_back(cmpLabel);
 
 		builder.setInsertPoint(caseBody);
@@ -810,7 +813,7 @@ void Parser::parseSwitch()
 
 		auto caseCmp = builder.createBasicBlock();
 		auto cmpLabel = new Label(caseCmp);
-		caseCmp->add(new Goto(bodyLabel)); // goto default body
+		caseCmp->addu(new Goto(bodyLabel)); // goto default body
 		caseCmps.push_back(cmpLabel);
 
 		builder.setInsertPoint(caseBody);
@@ -827,7 +830,7 @@ void Parser::parseSwitch()
 		builder.setInsertPoint((*i)->controller);
 	builder.setInsertPoint(nextLabel->controller);
 
-	lastBasicBlock->add(new Goto(caseCmps.front()));
+	lastBasicBlock->addu(new Goto(caseCmps.front()));
 
 	token = tokenizer.nextToken();
 }

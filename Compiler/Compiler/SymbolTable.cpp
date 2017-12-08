@@ -30,7 +30,7 @@ void Function::addBlock(BasicBlock *bb)
 
 void Function::addStatement(Quad *quad)
 {
-	current->add(quad);
+	current->addu(quad);
 }
 
 void Function::insert(TableElement *tableElement)
