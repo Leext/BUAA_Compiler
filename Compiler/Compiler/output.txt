@@ -1,10 +1,10 @@
 .data
-g_max: .word 0
-g_a: .word 0
-g_plus: .word 0
-g_minus: .word 0
-g_mult: .word 0
-g_div: .word 0
+g_max: .word 10
+g_a: .word 97
+g_plus: .word 43
+g_minus: .word 45
+g_mult: .word 42
+g_div: .word 47
 g_n: .word 0
 g_x: .word 0
 g_y: .word 0
@@ -223,7 +223,7 @@ label_3:
 addiu $sp $sp -4
 li $t1 0
 li $t2 1
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $v0 0($sp)
 b f_fibo_return
@@ -260,7 +260,7 @@ label_9:
 addiu $sp $sp -4
 li $t1 0
 li $t2 2
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $v0 0($sp)
 b f_fibo_return
@@ -269,7 +269,7 @@ label_8:
 addiu $sp $sp -20
 lw $t1 40($fp)
 li $t2 1
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 addiu $sp $sp -4
 lw $a0 0($sp)
@@ -297,7 +297,7 @@ addiu $sp $sp 4
 sw $v0 4($sp)
 lw $t1 40($fp)
 li $t2 2
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 8($sp)
 addiu $sp $sp -4
 lw $a0 8($sp)
@@ -325,7 +325,7 @@ addiu $sp $sp 4
 sw $v0 12($sp)
 lw $t1 4($sp)
 lw $t2 12($sp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 16($sp)
 lw $v0 16($sp)
 b f_fibo_return
@@ -374,11 +374,11 @@ label_14:
 addiu $sp $sp -8
 lb $t1 44($fp)
 li $t2 97
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t1 0($sp)
 li $t2 65
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t0 4($sp)
 sb $t0 0($fp)
@@ -439,11 +439,11 @@ label_19:
 addiu $sp $sp -8
 lb $t1 44($fp)
 li $t2 65
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t1 0($sp)
 li $t2 97
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t0 4($sp)
 sb $t0 0($fp)
@@ -531,7 +531,7 @@ label_23:
 addiu $sp $sp -8
 lw $t1 40($fp)
 lw $t2 44($fp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 0($sp)
 li $v0 4
 la $a0 str_1
@@ -541,7 +541,7 @@ lw $a0 0($sp)
 syscall
 lw $t1 40($fp)
 lw $t2 44($fp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $v0 4($sp)
 b f_operation_return
@@ -550,7 +550,7 @@ label_24:
 addiu $sp $sp -8
 lw $t1 40($fp)
 lw $t2 44($fp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 li $v0 4
 la $a0 str_2
@@ -560,7 +560,7 @@ lw $a0 0($sp)
 syscall
 lw $t1 40($fp)
 lw $t2 44($fp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $v0 4($sp)
 b f_operation_return
@@ -569,7 +569,7 @@ label_25:
 addiu $sp $sp -8
 lw $t1 40($fp)
 lw $t2 44($fp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 0($sp)
 li $v0 4
 la $a0 str_3
@@ -579,7 +579,7 @@ lw $a0 0($sp)
 syscall
 lw $t1 40($fp)
 lw $t2 44($fp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 4($sp)
 lw $v0 4($sp)
 b f_operation_return
@@ -594,7 +594,7 @@ label_28:
 addiu $sp $sp -8
 lw $t1 40($fp)
 lw $t2 44($fp)
-div $t0 $t1 $t1
+div $t0 $t1 $t2
 sw $t0 0($sp)
 li $v0 4
 la $a0 str_4
@@ -604,7 +604,7 @@ lw $a0 0($sp)
 syscall
 lw $t1 40($fp)
 lw $t2 44($fp)
-div $t0 $t1 $t1
+div $t0 $t1 $t2
 sw $t0 4($sp)
 lw $v0 4($sp)
 b f_operation_return
@@ -624,7 +624,7 @@ la $a0 str_6
 syscall
 li $t1 0
 li $t2 1
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $v0 0($sp)
 b f_operation_return
@@ -787,13 +787,13 @@ lb $a0 g_alphabet($a0 )
 syscall
 lw $t1 0($fp)
 li $t2 1
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 8($sp)
 lw $t0 8($sp)
 sw $t0 0($fp)
 lb $t1 4($fp)
 li $t2 1
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 12($sp)
 lw $t0 12($sp)
 sb $t0 4($fp)
@@ -871,7 +871,7 @@ lb $a0 g_alphabet($a0 )
 syscall
 lw $t1 0($fp)
 li $t2 1
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t0 4($sp)
 sw $t0 0($fp)
@@ -939,35 +939,35 @@ syscall
 sw $v0 4($fp)
 lw $t1 0($fp)
 lw $t2 4($fp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 0($sp)
 li $t1 0
 li $t2 2
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t1 4($fp)
 lw $t2 4($sp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 8($sp)
 li $t1 0
 lw $t2 8($sp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 12($sp)
 lw $t1 0($sp)
 lw $t2 12($sp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 16($sp)
 li $t1 2
 li $t2 0
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 20($sp)
 li $t1 0
 lw $t2 20($sp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 24($sp)
 lw $t1 16($sp)
 lw $t2 24($sp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 28($sp)
 lw $t0 28($sp)
 sw $t0 8($fp)
@@ -1033,15 +1033,15 @@ label_47:
 addiu $sp $sp -12
 lw $t1 44($fp)
 lw $t2 48($fp)
-div $t0 $t1 $t1
+div $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t1 0($sp)
 lw $t2 48($fp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t1 44($fp)
 lw $t2 4($sp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 8($sp)
 lw $t0 8($sp)
 sw $t0 0($fp)
@@ -1225,37 +1225,37 @@ label_56:
 addiu $sp $sp -24
 lw $t1 0($fp)
 li $t2 1
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t0 0($sp)
 sw $t0 0($fp)
 li $t1 0
 lw $t2 12($fp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t0 4($sp)
 sw $t0 16($fp)
 lw $t1 8($fp)
 lw $t2 16($fp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 8($sp)
 lw $t0 8($sp)
 sw $t0 20($fp)
 li $t1 0
 lw $t2 12($fp)
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 12($sp)
 lw $t0 12($sp)
 sw $t0 24($fp)
 lw $t1 8($fp)
 lw $t2 24($fp)
-mul $t0 $t1 $t1
+mul $t0 $t1 $t2
 sw $t0 16($sp)
 lw $t0 16($sp)
 sw $t0 12($fp)
 lw $t1 20($fp)
 lw $t2 12($fp)
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 20($sp)
 lw $t0 20($sp)
 sw $t0 28($fp)
@@ -1453,11 +1453,11 @@ syscall
 sw $v0 0($fp)
 lw $t1 0($fp)
 li $t2 97
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t1 0($sp)
 li $t2 1
-subu $t0 $t1 $t1
+subu $t0 $t1 $t2
 sw $t0 4($sp)
 lw $t0 4($sp)
 sb $t0 4($fp)
@@ -1849,7 +1849,7 @@ label_76:
 addiu $sp $sp -4
 lw $t1 0($fp)
 li $t2 1
-addu $t0 $t1 $t1
+addu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t0 0($sp)
 sw $t0 0($fp)
@@ -1893,3 +1893,5 @@ sw $s7 28($fp)
 lw $ra 44($fp)
 lw $fp 40($fp)
 addiu $sp $sp 48
+jr $ra
+nop

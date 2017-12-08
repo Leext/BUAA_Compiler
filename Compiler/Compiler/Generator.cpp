@@ -25,8 +25,10 @@ void Generator::generateData()
 		switch ((*i)->kind)
 		{
 		case K_VAR:
-		case K_CONST:
 			code.push_back("g_" + (*i)->name + ": .word 0");
+			break;
+		case K_CONST:
+			code.push_back("g_" + (*i)->name + ": .word " + to_string((long long)(*i)->value));
 			break;
 		case K_ARRAY:
 			code.push_back("g_" + (*i)->name + ": .space " + std::to_string((long long)(4 * (*i)->value)));
