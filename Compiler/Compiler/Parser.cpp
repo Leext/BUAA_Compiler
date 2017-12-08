@@ -34,7 +34,7 @@ Value *Parser::parseExpression()
 	if (term == nullptr)
 		return nullptr;
 	if (op == Op_SUB)
-		term = new Operator(Op_SUB, T_INT, new Constant(0), term);
+		builder.addStatement(term = new Operator(Op_SUB, T_INT, new Constant(0), term));
 	while (token == PLUS || token == MINUS)
 	{
 		op = (token == PLUS ? Op_ADD : Op_SUB);
@@ -42,7 +42,7 @@ Value *Parser::parseExpression()
 		auto term2 = parseTerm();
 		if (term2 == nullptr)
 			return nullptr;
-		term = new Operator(op, T_INT, term, term2);
+		builder.addStatement(term = new Operator(op, T_INT, term, term2));
 	}
 	return term;
 }
@@ -60,7 +60,7 @@ Value *Parser::parseTerm()
 		auto factor2 = parseFactor();
 		if (factor2 == nullptr)
 			return nullptr;
-		factor = new Operator(op, T_INT, factor, factor2);
+		builder.addStatement(factor = new Operator(op, T_INT, factor, factor2));
 	}
 	return factor;
 }

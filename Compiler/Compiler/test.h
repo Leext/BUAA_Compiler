@@ -8,6 +8,7 @@
 #include "IRBuilder.h"
 #include "error.h"
 #include "Parser.h"
+#include "Generator.h"
 using std::string;
 using std::unordered_map;
 class tester
@@ -97,5 +98,18 @@ class tester
 		auto errorHandler = ErrorHandler();
 		Parser parser = Parser(tokenizer, builder, errorHandler);
 		parser.parseProgram();
+	}
+	static void testGen()
+	{
+		std::fstream is = std::fstream("../TestCase/testZhufeng.txt", std::fstream::in);
+		Tokenizer tokenizer = Tokenizer(is);
+		IRBuilder builder = IRBuilder();
+		auto errorHandler = ErrorHandler();
+		Parser parser = Parser(tokenizer, builder, errorHandler);
+		parser.parseProgram();
+		Generator generator = Generator(&builder);
+		generator.generateData();
+		for (auto i = generator.code.begin(); i != generator.code.end(); i++)
+			std::cout << *i << std::endl;
 	}
 };

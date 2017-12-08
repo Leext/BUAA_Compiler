@@ -5,7 +5,7 @@
 #include "SymbolTable.h"
 #include "Quad.h"
 #include "error.h"
-#define __TEST
+
 using std::shared_ptr;
 using std::unordered_set;
 class Parser

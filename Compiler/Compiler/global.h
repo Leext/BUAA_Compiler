@@ -17,3 +17,4 @@ enum Type
 	T_VOID,
 	T_STRING
 };
+#define __TEST

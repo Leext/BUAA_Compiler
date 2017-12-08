@@ -41,7 +41,7 @@ class Function
 {
 	friend class IRBuilder;
 	friend class Parser;
-
+	friend class Generator;
   protected:
 	const string name;
 	SymbolTable *symbolTable;

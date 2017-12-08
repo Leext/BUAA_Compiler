@@ -7,6 +7,7 @@
 
 class IRBuilder
 {
+	friend class Generator;
   public:
 	IRBuilder();
 	~IRBuilder();
