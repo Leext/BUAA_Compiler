@@ -119,7 +119,7 @@ void Generator::generateFunction(Function * function)
 				auto op = static_cast<Operator*>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
-				code.push_back(string("addu $t0 $t1 $t1"));
+				code.push_back(string("addu $t0 $t1 $t2"));
 				storeValue(function, *quad, string("$t0"));
 				break;
 			}
@@ -128,7 +128,7 @@ void Generator::generateFunction(Function * function)
 				auto op = static_cast<Operator*>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
-				code.push_back(string("subu $t0 $t1 $t1"));
+				code.push_back(string("subu $t0 $t1 $t2"));
 				storeValue(function, *quad, string("$t0"));
 				break;
 			}
@@ -137,7 +137,7 @@ void Generator::generateFunction(Function * function)
 				auto op = static_cast<Operator*>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
-				code.push_back(string("mul $t0 $t1 $t1"));
+				code.push_back(string("mul $t0 $t1 $t2"));
 				storeValue(function, *quad, string("$t0"));
 				break;
 			}
@@ -146,7 +146,7 @@ void Generator::generateFunction(Function * function)
 				auto op = static_cast<Operator*>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
-				code.push_back(string("div $t0 $t1 $t1"));
+				code.push_back(string("div $t0 $t1 $t2"));
 				storeValue(function, *quad, string("$t0"));
 				break;
 			}
@@ -238,7 +238,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("beq $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BEQZ:
@@ -255,7 +254,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("beqz $t0 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BNE:
@@ -273,7 +271,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("bne $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BLE:
@@ -291,7 +288,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("ble $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BGE:
@@ -309,7 +305,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("bge $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BGT:
@@ -327,7 +322,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("bgt $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_BLT:
@@ -345,7 +339,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("blt $t0 $t1 label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 			case Op_GOTO:
@@ -361,7 +354,6 @@ void Generator::generateFunction(Function * function)
 					code.push_back("b label_" + to_string((long long)labelCount));
 					labelCount++;
 				}
-				code.push_back("nop");
 				break;
 			}
 

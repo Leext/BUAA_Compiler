@@ -218,7 +218,6 @@ addiu $sp $sp -0
 lw $t0 40($fp)
 li $t1 0
 bge $t0 $t1 label_2
-nop
 addiu $sp $sp 0
 label_3:
 addiu $sp $sp -4
@@ -234,7 +233,6 @@ addiu $sp $sp -0
 lw $t0 40($fp)
 li $t1 0
 bne $t0 $t1 label_4
-nop
 addiu $sp $sp 0
 label_5:
 addiu $sp $sp -0
@@ -246,7 +244,6 @@ addiu $sp $sp -0
 lw $t0 40($fp)
 li $t1 1
 bne $t0 $t1 label_6
-nop
 addiu $sp $sp 0
 label_7:
 addiu $sp $sp -0
@@ -258,7 +255,6 @@ addiu $sp $sp -0
 lw $t0 40($fp)
 lw $t1 g_max
 ble $t0 $t1 label_8
-nop
 addiu $sp $sp 0
 label_9:
 addiu $sp $sp -4
@@ -367,14 +363,12 @@ addiu $sp $sp -0
 lb $t0 44($fp)
 li $t1 97
 blt $t0 $t1 label_11
-nop
 addiu $sp $sp 0
 label_12:
 addiu $sp $sp -0
 lb $t0 44($fp)
 li $t1 122
 bgt $t0 $t1 label_13
-nop
 addiu $sp $sp 0
 label_14:
 addiu $sp $sp -8
@@ -434,14 +428,12 @@ addiu $sp $sp -0
 lb $t0 44($fp)
 li $t1 65
 blt $t0 $t1 label_16
-nop
 addiu $sp $sp 0
 label_17:
 addiu $sp $sp -0
 lb $t0 44($fp)
 li $t1 90
 bgt $t0 $t1 label_18
-nop
 addiu $sp $sp 0
 label_19:
 addiu $sp $sp -8
@@ -534,7 +526,6 @@ sw $a2 48($fp)
 label_21:
 addiu $sp $sp -0
 b label_22
-nop
 addiu $sp $sp 0
 label_23:
 addiu $sp $sp -8
@@ -598,7 +589,6 @@ addiu $sp $sp -0
 lw $t0 44($fp)
 li $t1 0
 beq $t0 $t1 label_27
-nop
 addiu $sp $sp 0
 label_28:
 addiu $sp $sp -8
@@ -644,33 +634,28 @@ addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 1
 beq $t0 $t1 label_23
-nop
 addiu $sp $sp 0
 label_30:
 addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 2
 beq $t0 $t1 label_24
-nop
 addiu $sp $sp 0
 label_31:
 addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 3
 beq $t0 $t1 label_25
-nop
 addiu $sp $sp 0
 label_32:
 addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 4
 beq $t0 $t1 label_26
-nop
 addiu $sp $sp 0
 label_33:
 addiu $sp $sp -0
 b label_29
-nop
 addiu $sp $sp 0
 label_34:
 addiu $sp $sp -0
@@ -708,7 +693,6 @@ addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 0
 bgt $t0 $t1 label_36
-nop
 addiu $sp $sp 0
 label_37:
 addiu $sp $sp -0
@@ -719,7 +703,6 @@ addiu $sp $sp -0
 lw $t0 48($fp)
 li $t1 26
 ble $t0 $t1 label_38
-nop
 addiu $sp $sp 0
 label_39:
 addiu $sp $sp -0
@@ -738,7 +721,6 @@ addiu $sp $sp -0
 lw $t0 0($fp)
 lw $t1 48($fp)
 bge $t0 $t1 label_41
-nop
 addiu $sp $sp 0
 label_42:
 addiu $sp $sp -16
@@ -816,7 +798,6 @@ sw $t0 12($sp)
 lw $t0 12($sp)
 sb $t0 4($fp)
 b label_40
-nop
 addiu $sp $sp 16
 label_41:
 addiu $sp $sp -0
@@ -850,7 +831,6 @@ addiu $sp $sp -0
 lw $t0 0($fp)
 lw $t1 48($fp)
 bge $t0 $t1 label_44
-nop
 addiu $sp $sp 0
 label_45:
 addiu $sp $sp -8
@@ -896,7 +876,6 @@ sw $t0 4($sp)
 lw $t0 4($sp)
 sw $t0 0($fp)
 b label_43
-nop
 addiu $sp $sp 8
 label_44:
 addiu $sp $sp -0
@@ -1103,7 +1082,6 @@ addiu $sp $sp -0
 lw $t0 44($fp)
 li $t1 0
 bne $t0 $t1 label_49
-nop
 addiu $sp $sp 0
 label_50:
 addiu $sp $sp -0
@@ -1140,7 +1118,6 @@ sw $v0 0($sp)
 lw $t0 0($sp)
 li $t1 0
 bne $t0 $t1 label_51
-nop
 addiu $sp $sp 4
 label_52:
 addiu $sp $sp -0
@@ -1243,7 +1220,6 @@ addiu $sp $sp -0
 lw $t0 0($fp)
 li $t1 10000
 bge $t0 $t1 label_55
-nop
 addiu $sp $sp 0
 label_56:
 addiu $sp $sp -24
@@ -1286,7 +1262,6 @@ sw $t0 28($fp)
 lw $t0 28($fp)
 sw $t0 4($fp)
 b label_54
-nop
 addiu $sp $sp 24
 label_55:
 addiu $sp $sp -0
@@ -1487,7 +1462,6 @@ sw $t0 4($sp)
 lw $t0 4($sp)
 sb $t0 4($fp)
 b label_58
-nop
 addiu $sp $sp 8
 label_59:
 addiu $sp $sp -0
@@ -1514,7 +1488,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_60
-nop
 addiu $sp $sp 0
 label_61:
 addiu $sp $sp -4
@@ -1576,7 +1549,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_60
-nop
 addiu $sp $sp 4
 label_62:
 addiu $sp $sp -4
@@ -1640,7 +1612,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_60
-nop
 addiu $sp $sp 4
 label_63:
 addiu $sp $sp -0
@@ -1671,7 +1642,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 4
 b label_60
-nop
 addiu $sp $sp 0
 label_64:
 addiu $sp $sp -4
@@ -1735,7 +1705,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_60
-nop
 addiu $sp $sp 4
 label_65:
 addiu $sp $sp -0
@@ -1743,7 +1712,6 @@ li $v0 4
 la $a0 str_10
 syscall
 b label_60
-nop
 addiu $sp $sp 0
 label_66:
 addiu $sp $sp -0
@@ -1770,54 +1738,46 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_60
-nop
 addiu $sp $sp 0
 label_58:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 97
 beq $t0 $t1 label_59
-nop
 addiu $sp $sp 0
 label_67:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 98
 beq $t0 $t1 label_61
-nop
 addiu $sp $sp 0
 label_68:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 99
 beq $t0 $t1 label_62
-nop
 addiu $sp $sp 0
 label_69:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 100
 beq $t0 $t1 label_63
-nop
 addiu $sp $sp 0
 label_70:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 101
 beq $t0 $t1 label_64
-nop
 addiu $sp $sp 0
 label_71:
 addiu $sp $sp -0
 lb $t0 4($fp)
 li $t1 102
 beq $t0 $t1 label_65
-nop
 addiu $sp $sp 0
 label_72:
 addiu $sp $sp -0
 b label_66
-nop
 addiu $sp $sp 0
 label_60:
 addiu $sp $sp -0
@@ -1884,7 +1844,6 @@ addiu $sp $sp -0
 lw $t0 0($fp)
 lw $t1 4($fp)
 bge $t0 $t1 label_75
-nop
 addiu $sp $sp 0
 label_76:
 addiu $sp $sp -4
@@ -1917,7 +1876,6 @@ lw $t7 28($sp)
 addiu $sp $sp 32
 addiu $sp $sp 0
 b label_74
-nop
 addiu $sp $sp 4
 label_75:
 addiu $sp $sp -0
