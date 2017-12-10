@@ -40,8 +40,10 @@ class ErrorHandler
 	std::unordered_map<ErrorType, std::string> errorInfo;
 
   public:
+	  bool encounterError;
 	ErrorHandler(std::ostream &err = std::cerr) : err(err)
 	{
+		encounterError = false;
 		errorInfo[IDENTIFIER_EXPECTED] = "identifier expected here";
 		errorInfo[UNEXPECTED_TOKEN] = "unexpected token here";
 		errorInfo[POSITIVE_INT_EXPECTED] = "expect a positive integer here";
@@ -76,10 +78,12 @@ class ErrorHandler
 
 	void report(int lineNum, const std::string &line, ErrorType type)
 	{
+		encounterError = true;
 		err << "error at line " << lineNum << " : " << line << "  " << errorInfo[type] << std::endl;
 	}
 	void report(int lineNum, const std::string &line, ErrorType type, std::string &ident)
 	{
+		encounterError = true;
 		err << "error at line " << lineNum << " : " << line << "  " << errorInfo[type] << ident << std::endl;
 	}
 };

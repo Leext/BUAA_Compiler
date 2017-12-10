@@ -13,7 +13,7 @@ using std::string;
 using std::unordered_map;
 class tester
 {
-  public:
+public:
 	static void test()
 	{
 		unordered_map<Token, string> token2str;
@@ -101,15 +101,18 @@ class tester
 	}
 	static void testGen()
 	{
-		std::fstream is = std::fstream("../TestCase/testZhufeng.txt", std::fstream::in);
+		std::fstream is = std::fstream("../TestCase/qsort.cpp", std::fstream::in);
 		Tokenizer tokenizer = Tokenizer(is);
 		IRBuilder builder = IRBuilder();
 		auto errorHandler = ErrorHandler();
 		Parser parser = Parser(tokenizer, builder, errorHandler);
 		parser.parseProgram();
-		Generator generator = Generator(&builder);
-		generator.generate();
-		auto out = std::fstream("output.txt", std::fstream::out);
-		generator.print(out);
+		if (!parser.haveError())
+		{
+			Generator generator = Generator(&builder);
+			generator.generate();
+			auto out = std::fstream("../output.txt", std::fstream::out);
+			generator.print(out);
+		}
 	}
 };

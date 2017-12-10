@@ -93,4 +93,8 @@ class Parser
 		typeSet.insert(VOID);
 	}
 	void startParse();
+	bool haveError()
+	{
+		return error.encounterError;
+	}
 };

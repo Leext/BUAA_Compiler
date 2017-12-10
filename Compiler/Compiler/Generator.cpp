@@ -447,9 +447,11 @@ void Generator::generateFunction(Function * function)
 	code.push_back("addiu $sp $sp " + to_string((long long)(-offset)));
 
 	// return 
-
-	code.push_back("jr $ra");
-	code.push_back("nop");
+	if (function->name != "main")
+	{
+		code.push_back("jr $ra");
+		code.push_back("nop");
+	}
 }
 
 void Generator::loadValue(Function* function, Quad * quad, string & reg, int temp)
