@@ -101,7 +101,7 @@ public:
 	}
 	static void testGen()
 	{
-		std::fstream is = std::fstream("../TestCase/qsort.cpp", std::fstream::in);
+		std::fstream is = std::fstream("../TestCase/testZhufeng.txt", std::fstream::in);
 		Tokenizer tokenizer = Tokenizer(is);
 		IRBuilder builder = IRBuilder();
 		auto errorHandler = ErrorHandler();

@@ -34,7 +34,7 @@ Value *Parser::parseExpression()
 	if (term == nullptr)
 		return nullptr;
 	if (op == Op_SUB)
-		builder.addStatement(term = new Operator(Op_SUB, T_INT, new Constant(0), term));
+		term = new Operator(Op_SUB, T_INT, new Constant(0), term);
 	while (token == PLUS || token == MINUS)
 	{
 		op = (token == PLUS ? Op_ADD : Op_SUB);
@@ -42,7 +42,7 @@ Value *Parser::parseExpression()
 		auto term2 = parseTerm();
 		if (term2 == nullptr)
 			return nullptr;
-		builder.addStatement(term = new Operator(op, T_INT, term, term2));
+		term = new Operator(op, T_INT, term, term2);
 	}
 	return term;
 }
@@ -60,7 +60,7 @@ Value *Parser::parseTerm()
 		auto factor2 = parseFactor();
 		if (factor2 == nullptr)
 			return nullptr;
-		builder.addStatement(factor = new Operator(op, T_INT, factor, factor2));
+		factor = new Operator(op, T_INT, factor, factor2);
 	}
 	return factor;
 }
@@ -135,8 +135,7 @@ Value *Parser::parseFactor()
 				}
 			}
 			token = tokenizer.nextToken();
-			auto ret = new FunctCall(func->name, func->type, args);
-			builder.addStatement(ret);
+			ret = new FunctCall(func->name, func->type, args);
 			return ret;
 		}
 		break;
@@ -912,6 +911,12 @@ void Parser::parseWhile()
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
 		goto error;
 	}
+
+	auto cond = builder.createBasicBlock();
+	auto body = builder.createBasicBlock();
+	auto next = builder.createBasicBlock();
+
+	builder.setInsertPoint(cond);
 	token = tokenizer.nextToken();
 	Value *cond1 = parseExpression();
 	Value *cond2 = nullptr;
@@ -934,11 +939,7 @@ void Parser::parseWhile()
 		goto error;
 	}
 
-	auto cond = builder.createBasicBlock();
-	auto body = builder.createBasicBlock();
-	auto next = builder.createBasicBlock();
 
-	builder.setInsertPoint(cond);
 	if (cmpToken == TK_NULL)
 		builder.createCmpBr(cond1, body, next);
 	else
