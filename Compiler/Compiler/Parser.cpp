@@ -867,6 +867,7 @@ void Parser::parseIf()
 	}
 	auto Then = builder.createBasicBlock();
 	auto Else = builder.createBasicBlock();
+	auto Next = builder.createBasicBlock();
 	if (cmpToken == TK_NULL)
 		builder.createCmpBr(cond1, Then, Else);
 	else
@@ -881,6 +882,7 @@ void Parser::parseIf()
 	}
 	builder.setInsertPoint(Then);
 	parseStatement();
+	builder.createGoto(new Label(Next));
 
 	// parse else block
 	if (token != ELSE)
@@ -896,6 +898,7 @@ void Parser::parseIf()
 	}
 	builder.setInsertPoint(Else);
 	parseStatement();
+	builder.setInsertPoint(Next);
 	return;
 error:
 	token = tokenizer.nextToken();
