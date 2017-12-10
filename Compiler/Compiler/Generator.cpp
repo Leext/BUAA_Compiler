@@ -527,7 +527,7 @@ void Generator::storeValueArray(Function * function, Quad * quad, string & reg, 
 			loadValue(function, offset, freeReg);
 			code.push_back("sll " + freeReg + freeReg + to_string(2ll));  // reg is address offset
 			code.push_back("addu " + freeReg + freeReg + "$fp");			// reg = $fp + address offset
-			code.push_back(instr + reg + to_string((long long)localOffset[name]) + "(" + freeReg + ")");  // reg += base address
+			code.push_back(instr + reg + " " + to_string((long long)localOffset[name]) + "(" + freeReg + ")");  // reg += base address
 		}
 		else
 		{
