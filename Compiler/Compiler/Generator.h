@@ -8,6 +8,8 @@ class Generator
 #endif // __TEST
 public:
 	Generator(IRBuilder *builder);
+	void generate();
+	void print(fstream &output);
 protected:
 	IRBuilder * builder;
 	vector<string> code;
@@ -15,7 +17,6 @@ protected:
 	unordered_map<Quad*, int> tempOffset;    // relative to $fp
 	unordered_map<BasicBlock*, int> bb2label;
 	int labelCount;
-	void generate();
 	void generateData();
 	void generateText();
 	void generateFunction(Function * function);
@@ -24,5 +25,4 @@ protected:
 	void loadValue(Function* function, Quad* quad, string &reg,int temp=0);
 	void storeValue(Function* function, Quad* quad, string &reg);
 	void storeValueArray(Function* function, Quad* quad, string &reg,string& freeReg);
-	void print(fstream &output);
 };

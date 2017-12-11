@@ -1136,4 +1136,5 @@ void Parser::parseReturn()
 
 void Parser::startParse()
 {
+	parseProgram();
 }

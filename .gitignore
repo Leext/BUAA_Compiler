@@ -8,3 +8,4 @@
 /Compiler/ipch
 .vs
 .vscode
+*.jar

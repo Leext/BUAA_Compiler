@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     //tester::testParseVarAndFunc();
     //tester::testParser();
-	tester::testGen();
+	tester::test();
     system("pause");
     return 0;
 }
