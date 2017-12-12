@@ -18,7 +18,6 @@ enum Opcode
 	Op_SUB,
 	Op_DIV,
 	Op_MULT,
-	Op_ASSIGN,
 	Op_ARRAY,
 	Op_RETURN,
 	Op_SCANF,
@@ -33,7 +32,7 @@ enum Opcode
 };
 class Quad
 {
-public:
+  public:
 	Quad(Opcode opcode) : opcode(opcode) {}
 	const Opcode opcode;
 	virtual string toString() const = 0;
@@ -41,20 +40,21 @@ public:
 
 class Value : public Quad
 {
-public:
+  public:
 	const Type type;
 	Value(Opcode opcode, Type type) : Quad(opcode), type(type) {}
+	virtual bool operator==(const Value &q);
 };
 
 class Instruction : public Quad
 {
-public:
+  public:
 	Instruction(Opcode opcode) : Quad(opcode) {}
 };
 
 class Label : public Instruction
 {
-public:
+  public:
 	Label() : Instruction(Op_LABEL) {}
 	Label(BasicBlock *c) : Instruction(Op_LABEL), controller(c) {}
 	BasicBlock *controller;
@@ -63,33 +63,38 @@ public:
 
 class Constant : public Value
 {
-public:
+  public:
 	Constant(int intVal) : Value(Op_CONST, T_INT), val(intVal) {}
 	Constant(char charVal) : Value(Op_CONST, T_CHAR), val(charVal) {}
 	const int val;
 	virtual string toString() const;
+	virtual bool operator==(const Value &q);
 };
 
 class Var : public Value
 {
-public:
+  public:
 	const string name;
-	Var(const string &name, Type type) : Value(Op_VAR, type), name(name) {}
+	Value *value;
+	Var(const string &name, Type type, Value *value = nullptr) : Value(Op_VAR, type), value(value), name(name) {}
 	virtual string toString() const;
+	virtual bool operator==(const Value &q);
 };
 
 class Operator : public Value
 {
-public:
+  public:
 	Value *s1;
 	Value *s2;
 	Operator(Opcode opcode, Type type, Value *const s1, Value *const s2) : Value(opcode, type), s1(s1), s2(s2) {}
+	~Operator();
 	virtual string toString() const;
+	virtual bool operator==(const Value &q);
 };
 
 class Goto : public Instruction
 {
-public:
+  public:
 	const Label *label;
 	Goto(Label *const label) : Instruction(Op_GOTO), label(label) {}
 	virtual string toString() const;
@@ -97,7 +102,7 @@ public:
 
 class CmpBr : public Instruction
 {
-public:
+  public:
 	const Label *label;
 	Value *s1;
 	Value *s2;
@@ -108,7 +113,7 @@ public:
 
 class FunctCall : public Value
 {
-public:
+  public:
 	vector<Value *> args;
 	string name;
 	FunctCall(const string &name, Type type, vector<Value *> args) : name(name), args(std::move(args)), Value(Op_FUNCALL, type) {}
@@ -117,7 +122,7 @@ public:
 
 class VoidCall : public Instruction
 {
-public:
+  public:
 	vector<Value *> args;
 	string name;
 	VoidCall(const string &name, vector<Value *> args) : name(name), args(std::move(args)), Instruction(Op_VOIDCALL) {}
@@ -126,27 +131,29 @@ public:
 
 class Array : public Value
 {
-public:
+  public:
 	Value *offset;
+	Value *value;
 	const string name;
-	Array(Value *const offset, const string &name, Type type) : offset(offset), name(name), Value(Op_ARRAY, type) {}
+	Array(Value *const offset, const string &name, Type type, Value *value = nullptr) : offset(offset), name(name), value(value), Value(Op_ARRAY, type) {}
 	virtual string toString() const;
+	virtual bool operator==(const Value& q);
 };
 
-class Assign : public Instruction
-{
-public:
-	Value *var;
-	Value *s1;
-	Assign(Var *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
-	Assign(Array *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
-	Assign(Value *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
-	virtual string toString() const;
-};
+//class Assign : public Instruction
+//{
+//public:
+//	Value * var;
+//	Value *s1;
+//	Assign(Var *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
+//	Assign(Array *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
+//	Assign(Value *const var, Value *const s1) : var(var), s1(s1), Instruction(Op_ASSIGN) {}
+//	virtual string toString() const;
+//};
 
 class Return : public Instruction
 {
-public:
+  public:
 	Value *ret;
 	Return(Value *const var) : ret(var), Instruction(Op_RETURN) {}
 	Return() : ret(nullptr), Instruction(Op_RETURN) {}
@@ -155,7 +162,7 @@ public:
 
 class Scanf : public Instruction
 {
-public:
+  public:
 	vector<Var *> args;
 	Scanf(vector<Var *> args) : args(std::move(args)), Instruction(Op_SCANF) {}
 	virtual string toString() const;
@@ -163,7 +170,7 @@ public:
 
 class Printf : public Instruction
 {
-public:
+  public:
 	Value *value;
 	int strIndex;
 	Printf(int strIndex, Value *value = nullptr) : strIndex(strIndex), value(value), Instruction(Op_PRINTF) {}

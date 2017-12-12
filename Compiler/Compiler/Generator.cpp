@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Generator.h"
 using std::to_string;
-Generator::Generator(IRBuilder * builder) : builder(builder)
+Generator::Generator(IRBuilder *builder) : builder(builder)
 {
 	labelCount = 0;
 }
@@ -19,7 +19,7 @@ void Generator::generate()
 void Generator::generateData()
 {
 	code.push_back(".data");
-	auto & symbols = builder->globalSymbolTable.symbols;
+	auto &symbols = builder->globalSymbolTable.symbols;
 	for (auto i = symbols.begin(); i != symbols.end(); i++)
 	{
 		switch ((*i)->kind)
@@ -35,18 +35,18 @@ void Generator::generateData()
 			break;
 		}
 	}
-	auto & strs = builder->strTable;
+	auto &strs = builder->strTable;
 	for (int i = 0; i < strs.size(); i++)
 		code.push_back("str_" + std::to_string((long long)i) + ": .asciiz \"" + strs[i] + "\"");
 }
 
-void Generator::generateFunction(Function * function)
+void Generator::generateFunction(Function *function)
 {
 	// function label
 	code.push_back("f_" + function->name + ':');
 	// get stack slot count
 	localOffset.clear();
-	int stackSlotCount = 2 + 8;   // for save $ra + $fp + $s0~$s7
+	int stackSlotCount = 2 + 8; // for save $ra + $fp + $s0~$s7
 	auto symbolTable = function->symbolTable->symbols;
 	int offset = -(stackSlotCount << 2);
 	int localVarOffset = 0;
@@ -95,7 +95,7 @@ void Generator::generateFunction(Function * function)
 		if (bb2label.find(bb) == bb2label.end())
 			bb2label[bb] = labelCount++;
 		code.push_back("label_" + to_string((long long)bb2label[bb]) + ":");
-		auto& quads = bb->quads;
+		auto &quads = bb->quads;
 		int tempVarOffset = 0;
 		for (auto quad = quads.begin(); quad != quads.end(); quad++)
 		{
@@ -118,7 +118,7 @@ void Generator::generateFunction(Function * function)
 			{
 			case Op_ADD:
 			{
-				auto op = static_cast<Operator*>(*quad);
+				auto op = static_cast<Operator *>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
 				code.push_back(string("addu $t0 $t1 $t2"));
@@ -127,7 +127,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_SUB:
 			{
-				auto op = static_cast<Operator*>(*quad);
+				auto op = static_cast<Operator *>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
 				code.push_back(string("subu $t0 $t1 $t2"));
@@ -136,7 +136,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_MULT:
 			{
-				auto op = static_cast<Operator*>(*quad);
+				auto op = static_cast<Operator *>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
 				code.push_back(string("mul $t0 $t1 $t2"));
@@ -145,7 +145,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_DIV:
 			{
-				auto op = static_cast<Operator*>(*quad);
+				auto op = static_cast<Operator *>(*quad);
 				loadValue(function, op->s1, string("$t1"));
 				loadValue(function, op->s2, string("$t2"));
 				code.push_back(string("div $t0 $t1 $t2"));
@@ -154,7 +154,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_FUNCALL:
 			{
-				auto op = static_cast<FunctCall*>(*quad);
+				auto op = static_cast<FunctCall *>(*quad);
 				// pass args
 				int temp = (op->args.size() << 2);
 				code.push_back("addiu $sp $sp -" + to_string((long long)temp));
@@ -194,7 +194,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_VOIDCALL:
 			{
-				auto op = static_cast<VoidCall*>(*quad);
+				auto op = static_cast<VoidCall *>(*quad);
 				// pass args
 				int temp = (op->args.size() << 2);
 				code.push_back("addiu $sp $sp -" + to_string((long long)temp));
@@ -230,19 +230,39 @@ void Generator::generateFunction(Function * function)
 				}
 				break;
 			}
-			case Op_ASSIGN:
+			case Op_VAR:
 			{
-				auto op = static_cast<Assign*>(*quad);
-				loadValue(function, op->s1, string("$t0"));
-				if (op->var->opcode == Op_ARRAY)
-					storeValueArray(function, op->var, string("$t0"), string("$t1"));
-				else
-					storeValue(function, op->var, string("$t0"));
+				auto op = static_cast<Var *>(*quad);
+				if (op->value != nullptr)
+				{
+					loadValue(function, op->value, string("$t0"));
+					storeValue(function, op, string("$t0"));
+				}
 				break;
 			}
+			case Op_ARRAY:
+			{
+				auto op = static_cast<Array *>(*quad);
+				if (op->value != nullptr)
+				{
+					loadValue(function, op->value, string("$t0"));
+					storeValueArray(function, op, string("$t0"), string("$t1"));
+				}
+				break;
+			}
+			//case Op_ASSIGN:
+			//{
+			//	auto op = static_cast<Assign*>(*quad);
+			//	loadValue(function, op->s1, string("$t0"));
+			//	if (op->var->opcode == Op_ARRAY)
+			//		storeValueArray(function, op->var, string("$t0"), string("$t1"));
+			//	else
+			//		storeValue(function, op->var, string("$t0"));
+			//	break;
+			//}
 			case Op_BEQ:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -259,7 +279,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BEQZ:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
 				{
@@ -275,7 +295,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BNE:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -292,7 +312,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BLE:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -309,7 +329,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BGE:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -326,7 +346,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BGT:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -343,7 +363,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_BLT:
 			{
-				CmpBr* op = static_cast<CmpBr*>(*quad);
+				CmpBr *op = static_cast<CmpBr *>(*quad);
 				loadValue(function, op->s1, string("$t0"));
 				loadValue(function, op->s2, string("$t1"));
 				if (bb2label.find(op->label->controller) != bb2label.end())
@@ -360,7 +380,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_GOTO:
 			{
-				auto op = static_cast<Goto*>(*quad);
+				auto op = static_cast<Goto *>(*quad);
 				if (bb2label.find(op->label->controller) != bb2label.end())
 				{
 					code.push_back("b label_" + to_string((long long)bb2label[op->label->controller]));
@@ -376,7 +396,7 @@ void Generator::generateFunction(Function * function)
 
 			case Op_SCANF:
 			{
-				auto op = static_cast<Scanf*>(*quad);
+				auto op = static_cast<Scanf *>(*quad);
 				for (auto i = op->args.begin(); i != op->args.end(); i++)
 				{
 					if ((*i)->type == T_INT)
@@ -384,7 +404,6 @@ void Generator::generateFunction(Function * function)
 						code.push_back("li $v0 5");
 						code.push_back("syscall");
 						storeValue(function, *i, string("$v0"));
-
 					}
 					else if ((*i)->type == T_CHAR)
 					{
@@ -397,7 +416,7 @@ void Generator::generateFunction(Function * function)
 			}
 			case Op_PRINTF:
 			{
-				auto op = static_cast<Printf*>(*quad);
+				auto op = static_cast<Printf *>(*quad);
 				if (op->strIndex >= 0)
 				{
 					code.push_back("li $v0 4");
@@ -424,17 +443,16 @@ void Generator::generateFunction(Function * function)
 
 			case Op_RETURN:
 			{
-				auto op = static_cast<Return*>(*quad);
+				auto op = static_cast<Return *>(*quad);
 				if (op->ret != nullptr)
 					loadValue(function, op->ret, string("$v0"));
 				code.push_back("b f_" + function->name + "_return");
 				goto out;
 			}
 			} // switch
-		} // for
+		}	 // for
 	out:
 		code.push_back("addiu $sp $sp " + to_string((long long)tempVarOffset));
-
 
 	} // for
 	code.push_back("f_" + function->name + "_return:");
@@ -446,7 +464,7 @@ void Generator::generateFunction(Function * function)
 	code.push_back("lw $fp " + to_string((long long)(-8 - offset)) + "($fp)");
 	code.push_back("addiu $sp $sp " + to_string((long long)(-offset)));
 
-	// return 
+	// return
 	if (function->name != "main")
 	{
 		code.push_back("jr $ra");
@@ -454,31 +472,31 @@ void Generator::generateFunction(Function * function)
 	}
 }
 
-void Generator::loadValue(Function* function, Quad * quad, string & reg, int temp)
+void Generator::loadValue(Function *function, Quad *quad, string &reg, int temp)
 {
 	if (reg.back() != ' ')
 		reg += ' ';
-	string instr = (static_cast<Value*>(quad)->type == T_INT) ? "lw " : "lb ";
+	string instr = (static_cast<Value *>(quad)->type == T_INT) ? "lw " : "lb ";
 	if (quad->opcode == Op_CONST)
-		code.push_back("li " + reg + to_string((long long)static_cast<Constant*>(quad)->val));
+		code.push_back("li " + reg + to_string((long long)static_cast<Constant *>(quad)->val));
 	else if (quad->opcode == Op_VAR)
 	{
-		auto name = static_cast<Var*>(quad)->name;
-		if (function->lookup(name) != nullptr)// local var
+		auto name = static_cast<Var *>(quad)->name;
+		if (function->lookup(name) != nullptr) // local var
 			code.push_back(instr + reg + to_string((long long)localOffset["l_" + name]) + "($fp)");
 		else //global var
 			code.push_back(instr + reg + "g_" + name);
 	}
 	else if (quad->opcode == Op_ARRAY)
 	{
-		auto name = static_cast<Array*>(quad)->name;
-		auto offset = static_cast<Array*>(quad)->offset;
+		auto name = static_cast<Array *>(quad)->name;
+		auto offset = static_cast<Array *>(quad)->offset;
 		if (function->lookup(name) != nullptr)
 		{
 			loadValue(function, offset, reg);
-			code.push_back("sll " + reg + reg + to_string(2ll));  // reg is address offset
-			code.push_back("addu " + reg + reg + "$fp");			// reg = $fp + address offset
-			code.push_back(instr + reg + to_string((long long)localOffset["l_" + name]) + "(" + reg + ")");  // reg += base address
+			code.push_back("sll " + reg + reg + to_string(2ll));											// reg is address offset
+			code.push_back("addu " + reg + reg + "$fp");													// reg = $fp + address offset
+			code.push_back(instr + reg + to_string((long long)localOffset["l_" + name]) + "(" + reg + ")"); // reg += base address
 		}
 		else
 		{
@@ -493,14 +511,14 @@ void Generator::loadValue(Function* function, Quad * quad, string & reg, int tem
 	}
 }
 
-void Generator::storeValue(Function * function, Quad * quad, string & reg)
+void Generator::storeValue(Function *function, Quad *quad, string &reg)
 {
 	if (reg.back() != ' ')
 		reg += ' ';
-	string instr = (static_cast<Value*>(quad)->type == T_INT) ? "sw " : "sb ";
+	string instr = (static_cast<Value *>(quad)->type == T_INT) ? "sw " : "sb ";
 	if (quad->opcode == Op_VAR)
 	{
-		auto name = static_cast<Var*>(quad)->name;
+		auto name = static_cast<Var *>(quad)->name;
 		if (function->lookup(name) != nullptr)
 			code.push_back(instr + reg + to_string((long long)localOffset["l_" + name]) + "($fp)");
 		else
@@ -513,21 +531,21 @@ void Generator::storeValue(Function * function, Quad * quad, string & reg)
 	}
 }
 
-void Generator::storeValueArray(Function * function, Quad * quad, string & reg, string & freeReg)
+void Generator::storeValueArray(Function *function, Quad *quad, string &reg, string &freeReg)
 {
 	if (quad->opcode == Op_ARRAY)
 	{
-		string instr = (static_cast<Value*>(quad)->type == T_INT) ? "sw " : "sb ";
+		string instr = (static_cast<Value *>(quad)->type == T_INT) ? "sw " : "sb ";
 		if (freeReg.back() != ' ')
 			freeReg += ' ';
-		auto name = static_cast<Array*>(quad)->name;
-		auto offset = static_cast<Array*>(quad)->offset;
+		auto name = static_cast<Array *>(quad)->name;
+		auto offset = static_cast<Array *>(quad)->offset;
 		if (function->lookup(name) != nullptr)
 		{
 			loadValue(function, offset, freeReg);
-			code.push_back("sll " + freeReg + freeReg + to_string(2ll));  // reg is address offset
-			code.push_back("addu " + freeReg + freeReg + "$fp");			// reg = $fp + address offset
-			code.push_back(instr + reg + " " + to_string((long long)localOffset["l_" + name]) + "(" + freeReg + ")");  // reg += base address
+			code.push_back("sll " + freeReg + freeReg + to_string(2ll));											  // reg is address offset
+			code.push_back("addu " + freeReg + freeReg + "$fp");													  // reg = $fp + address offset
+			code.push_back(instr + reg + " " + to_string((long long)localOffset["l_" + name]) + "(" + freeReg + ")"); // reg += base address
 		}
 		else
 		{
@@ -538,7 +556,7 @@ void Generator::storeValueArray(Function * function, Quad * quad, string & reg, 
 	}
 }
 
-void Generator::print(fstream & output)
+void Generator::print(fstream &output)
 {
 	for (auto i = code.begin(); i != code.end(); i++)
 		output << *i << std::endl;

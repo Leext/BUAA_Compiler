@@ -35,19 +35,30 @@ void BasicBlock::addu(Quad *quad)
 		break;
 	}
 	case Op_CONST:
-	case Op_VAR:
 		return;
-	case Op_ASSIGN:
+	case Op_VAR:
 	{
-		auto op = static_cast<Assign*>(quad);
-		addu(op->s1);
-		addu(op->var);
+		auto op = static_cast<Var*>(quad);
+		if (op->value != nullptr)
+			addu(op->value);
+		else return;
 		break;
 	}
+	//case Op_ASSIGN:
+	//{
+	//	auto op = static_cast<Assign*>(quad);
+	//	addu(op->s1);
+	//	addu(op->var);
+	//	break;
+	//}
 	case Op_ARRAY:
 	{
 		auto op = static_cast<Array*>(quad);
 		addu(op->offset);
+		if (op->value != nullptr)
+			addu(op->value);
+		else
+			return;
 		break;
 	}
 	case Op_FUNCALL:

@@ -186,6 +186,7 @@ void Parser::parseStatement()
 		const Function *function;
 		if ((te = builder.lookup(identifier)) != nullptr) // assign
 		{
+			Value *offset;
 			Value *variable;
 			if (te->kind == K_ARRAY)
 			{
@@ -196,7 +197,7 @@ void Parser::parseStatement()
 					goto error;
 				}
 				token = tokenizer.nextToken();
-				auto offset = parseExpression();
+				offset = parseExpression();
 				if (offset == nullptr)
 					goto error;
 				std::cout << "expression " << offset->toString() << std::endl;
@@ -206,11 +207,6 @@ void Parser::parseStatement()
 					/// todo skip
 					goto error;
 				}
-				variable = new Array(offset, te->name, te->type);
-			}
-			else
-			{
-				variable = new Var(te->name, te->type);
 			}
 			if (!match(BECOME))
 			{
@@ -228,7 +224,10 @@ void Parser::parseStatement()
 			if (val == nullptr)
 				goto error;
 			std::cout << "expression " << val->toString() << std::endl;
-			builder.addStatement(new Assign(variable, val));
+			if (te->kind == K_ARRAY)
+				builder.addStatement(new Array(offset, te->name, te->type, val));
+			else
+				builder.addStatement(new Var(te->name, te->type, val));
 		}
 		else if ((function = builder.lookupFunc(identifier)) != nullptr)
 		{
@@ -453,7 +452,6 @@ void Parser::parseFunction()
 		token = tokenizer.nextToken();
 		if (haveReadMain)
 			throw 1;
-
 	}
 	else //error
 	{
@@ -942,7 +940,6 @@ void Parser::parseWhile()
 		goto error;
 	}
 
-
 	if (cmpToken == TK_NULL)
 		builder.createCmpBr(cond1, body, next);
 	else
@@ -1114,7 +1111,6 @@ void Parser::parseReturn()
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_PARENTHESES_EXPECTED);
 				skipToToken(SEMICOLON);
 				return;
-
 			}
 			if (func->type == T_CHAR && val->type == T_INT)
 			{
