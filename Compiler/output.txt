@@ -1,249 +1,295 @@
 .data
-g_a: .space 400
+str_0: .asciiz " | "
+str_1: .asciiz " | "
+str_2: .asciiz " | "
 .text
 b f_main
 nop
-f_partition:
-addiu $sp $sp -52
-sw $ra 48($sp)
-sw $fp 44($sp)
+f_test_dag:
+addiu $sp $sp -172
+sw $ra 168($sp)
+sw $fp 164($sp)
 move $fp $sp
-sw $s0 40($fp)
-sw $s1 36($fp)
-sw $s2 32($fp)
-sw $s3 28($fp)
-sw $s4 24($fp)
-sw $s5 20($fp)
-sw $s6 16($fp)
-sw $s7 12($fp)
-sw $a0 52($fp)
-sw $a1 56($fp)
+sw $s0 160($fp)
+sw $s1 156($fp)
+sw $s2 152($fp)
+sw $s3 148($fp)
+sw $s4 144($fp)
+sw $s5 140($fp)
+sw $s6 136($fp)
+sw $s7 132($fp)
 label_0:
-addiu $sp $sp -4
-lw $t1 52($fp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t0 0($sp)
-sw $t0 0($fp)
-lw $t0 52($fp)
-sw $t0 4($fp)
-addiu $sp $sp 4
-label_1:
-addiu $sp $sp -4
-lw $t1 56($fp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t0 4($fp)
-lw $t1 0($sp)
-bgt $t0 $t1 label_2
-addiu $sp $sp 4
-label_3:
 addiu $sp $sp -0
-lw $t0 4($fp)
-sll $t0 $t0 2
-lw $t0 g_a($t0 )
-lw $t1 56($fp)
-sll $t1 $t1 2
-lw $t1 g_a($t1 )
-bge $t0 $t1 label_4
+li $t0 0
+sw $t0 120($fp)
+li $t0 2
+sw $t0 124($fp)
 addiu $sp $sp 0
-label_5:
+label_1:
+addiu $sp $sp -0
+lw $t0 120($fp)
+li $t1 10
+bge $t0 $t1 label_2
+addiu $sp $sp 0
+label_3:
 addiu $sp $sp -4
-lw $t1 0($fp)
+li $t0 0
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t0 0
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 40($t1 )
+li $t0 0
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 80($t1 )
+lw $t1 120($fp)
 li $t2 1
 addu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t0 0($sp)
-sw $t0 0($fp)
-lw $t0 0($sp)
-sll $t0 $t0 2
-lw $t0 g_a($t0 )
-sw $t0 8($fp)
-lw $t0 4($fp)
-sll $t0 $t0 2
-lw $t0 g_a($t0 )
-lw $t1 0($sp)
-sll $t1 $t1 2
-sw $t0 g_a($t1 )
-lw $t0 8($fp)
-lw $t1 4($fp)
-sll $t1 $t1 2
-sw $t0 g_a($t1 )
-b label_6
+sw $t0 120($fp)
+b label_1
 addiu $sp $sp 4
+label_2:
+addiu $sp $sp -0
+lw $t0 120($fp)
+lw $t1 124($fp)
+ble $t0 $t1 label_4
+addiu $sp $sp 0
+label_5:
+addiu $sp $sp -0
+li $t0 2
+sw $t0 120($fp)
+li $t0 3
+sw $t0 124($fp)
+b label_6
+addiu $sp $sp 0
 label_4:
 addiu $sp $sp -0
 addiu $sp $sp 0
 label_6:
 addiu $sp $sp -4
-lw $t1 4($fp)
+li $t0 10
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t0 10
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 40($t1 )
+li $t0 10
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 80($t1 )
+li $t0 11
+lw $t1 124($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t0 11
+lw $t1 124($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 80($t1 )
+li $t0 11
+lw $t1 124($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 40($t1 )
+lw $t1 120($fp)
 li $t2 1
 addu $t0 $t1 $t2
 sw $t0 0($sp)
 lw $t0 0($sp)
-sw $t0 4($fp)
-b label_1
-addiu $sp $sp 4
-label_2:
-addiu $sp $sp -4
-lw $t1 0($fp)
-li $t2 1
-addu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t0 0($sp)
-sll $t0 $t0 2
-lw $t0 g_a($t0 )
-sw $t0 8($fp)
-lw $t0 56($fp)
-sll $t0 $t0 2
-lw $t0 g_a($t0 )
+sw $t0 128($fp)
+li $t0 10
 lw $t1 0($sp)
 sll $t1 $t1 2
-sw $t0 g_a($t1 )
-lw $t0 8($fp)
-lw $t1 56($fp)
-sll $t1 $t1 2
-sw $t0 g_a($t1 )
-lw $v0 0($sp)
-b f_partition_return
-addiu $sp $sp 4
-f_partition_return:
-sw $s0 0($fp)
-sw $s1 4($fp)
-sw $s2 8($fp)
-sw $s3 12($fp)
-sw $s4 16($fp)
-sw $s5 20($fp)
-sw $s6 24($fp)
-sw $s7 28($fp)
-lw $ra 48($fp)
-lw $fp 44($fp)
-addiu $sp $sp 52
-jr $ra
-nop
-f_qsort:
-addiu $sp $sp -44
-sw $ra 40($sp)
-sw $fp 36($sp)
-move $fp $sp
-sw $s0 32($fp)
-sw $s1 28($fp)
-sw $s2 24($fp)
-sw $s3 20($fp)
-sw $s4 16($fp)
-sw $s5 12($fp)
-sw $s6 8($fp)
-sw $s7 4($fp)
-sw $a0 44($fp)
-sw $a1 48($fp)
-label_7:
-addiu $sp $sp -0
-lw $t0 44($fp)
-lw $t1 48($fp)
-bge $t0 $t1 label_8
-addiu $sp $sp 0
-label_9:
-addiu $sp $sp -12
-addiu $sp $sp -8
-lw $a0 44($fp)
-lw $a1 48($fp)
-addiu $sp $sp -32
-sw $t0 0($sp)
-sw $t1 4($sp)
-sw $t2 8($sp)
-sw $t3 12($sp)
-sw $t4 16($sp)
-sw $t5 20($sp)
-sw $t6 24($sp)
-sw $t7 28($sp)
-jal f_partition
-nop
-lw $t0 0($sp)
-lw $t1 4($sp)
-lw $t2 8($sp)
-lw $t3 12($sp)
-lw $t4 16($sp)
-lw $t5 20($sp)
-lw $t6 24($sp)
-lw $t7 28($sp)
-addiu $sp $sp 32
-addiu $sp $sp 8
-lw $a0 44($fp)
-lw $a1 48($fp)
-sw $v0 0($sp)
-lw $t0 0($sp)
-sw $t0 0($fp)
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t0 10
 lw $t1 0($sp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 4($sp)
-addiu $sp $sp -8
-lw $a0 44($fp)
-lw $a1 12($sp)
-addiu $sp $sp -32
-sw $t0 0($sp)
-sw $t1 4($sp)
-sw $t2 8($sp)
-sw $t3 12($sp)
-sw $t4 16($sp)
-sw $t5 20($sp)
-sw $t6 24($sp)
-sw $t7 28($sp)
-jal f_qsort
-nop
-lw $t0 0($sp)
-lw $t1 4($sp)
-lw $t2 8($sp)
-lw $t3 12($sp)
-lw $t4 16($sp)
-lw $t5 20($sp)
-lw $t6 24($sp)
-lw $t7 28($sp)
-addiu $sp $sp 32
-addiu $sp $sp 8
-lw $a0 44($fp)
-lw $a1 48($fp)
-lw $t1 0($fp)
-li $t2 1
-addu $t0 $t1 $t2
-sw $t0 8($sp)
-addiu $sp $sp -8
-lw $a0 16($sp)
-lw $a1 48($fp)
-addiu $sp $sp -32
-sw $t0 0($sp)
-sw $t1 4($sp)
-sw $t2 8($sp)
-sw $t3 12($sp)
-sw $t4 16($sp)
-sw $t5 20($sp)
-sw $t6 24($sp)
-sw $t7 28($sp)
-jal f_qsort
-nop
-lw $t0 0($sp)
-lw $t1 4($sp)
-lw $t2 8($sp)
-lw $t3 12($sp)
-lw $t4 16($sp)
-lw $t5 20($sp)
-lw $t6 24($sp)
-lw $t7 28($sp)
-addiu $sp $sp 32
-addiu $sp $sp 8
-lw $a0 44($fp)
-lw $a1 48($fp)
-b label_10
-addiu $sp $sp 12
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 40($t1 )
+li $t0 10
+lw $t1 0($sp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 80($t1 )
+lw $t0 120($fp)
+lw $t1 124($fp)
+bge $t0 $t1 label_7
+addiu $sp $sp 4
 label_8:
 addiu $sp $sp -0
+li $t0 3
+sw $t0 120($fp)
+b label_9
 addiu $sp $sp 0
-label_10:
+label_7:
 addiu $sp $sp -0
 addiu $sp $sp 0
-f_qsort_return:
+label_9:
+addiu $sp $sp -40
+li $t0 11
+lw $t1 124($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t0 0
+sll $t0 $t0 2
+addu $t0 $t0 $fp
+lw $t0 0($t0 )
+sw $t0 128($fp)
+lw $t1 128($fp)
+li $t2 1
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 0($t2 )
+addu $t0 $t1 $t2
+sw $t0 0($sp)
+lw $t0 0($sp)
+sw $t0 128($fp)
+lw $t1 0($sp)
+li $t2 2
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 0($t2 )
+addu $t0 $t1 $t2
+sw $t0 4($sp)
+lw $t0 4($sp)
+sw $t0 128($fp)
+lw $t1 4($sp)
+li $t2 3
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 0($t2 )
+addu $t0 $t1 $t2
+sw $t0 8($sp)
+lw $t0 8($sp)
+sw $t0 128($fp)
+lw $t1 8($sp)
+li $t2 4
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 0($t2 )
+addu $t0 $t1 $t2
+sw $t0 12($sp)
+lw $t0 12($sp)
+sw $t0 128($fp)
+lw $t1 12($sp)
+li $t2 5
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 0($t2 )
+addu $t0 $t1 $t2
+sw $t0 16($sp)
+lw $t0 16($sp)
+sw $t0 128($fp)
+li $t0 10
+lw $t1 120($fp)
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+sw $t0 0($t1 )
+li $t1 0
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+lw $t1 0($t1 )
+li $t2 0
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 40($t2 )
+addu $t0 $t1 $t2
+sw $t0 20($sp)
+lw $t0 20($sp)
+sw $t0 124($fp)
+li $t1 1
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+lw $t1 0($t1 )
+li $t2 1
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 40($t2 )
+addu $t0 $t1 $t2
+sw $t0 24($sp)
+lw $t0 24($sp)
+sw $t0 124($fp)
+li $t1 2
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+lw $t1 0($t1 )
+li $t2 2
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 40($t2 )
+addu $t0 $t1 $t2
+sw $t0 28($sp)
+lw $t0 28($sp)
+sw $t0 124($fp)
+li $t1 3
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+lw $t1 0($t1 )
+li $t2 3
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 40($t2 )
+addu $t0 $t1 $t2
+sw $t0 32($sp)
+lw $t0 32($sp)
+sw $t0 124($fp)
+li $t1 4
+sll $t1 $t1 2
+addu $t1 $t1 $fp
+lw $t1 0($t1 )
+li $t2 4
+sll $t2 $t2 2
+addu $t2 $t2 $fp
+lw $t2 40($t2 )
+addu $t0 $t1 $t2
+sw $t0 36($sp)
+lw $t0 36($sp)
+sw $t0 124($fp)
+li $v0 1
+lw $a0 16($sp)
+syscall
+li $v0 4
+la $a0 str_0
+syscall
+li $v0 1
+lw $a0 36($sp)
+syscall
+li $v0 4
+la $a0 str_1
+syscall
+li $v0 1
+li $a0 2
+sll $a0 $a0 2
+addu $a0 $a0 $fp
+lw $a0 80($a0 )
+syscall
+li $v0 4
+la $a0 str_2
+syscall
+li $v0 1
+li $a0 3
+sll $a0 $a0 2
+addu $a0 $a0 $fp
+lw $a0 80($a0 )
+syscall
+addiu $sp $sp 40
+f_test_dag_return:
 sw $s0 0($fp)
 sw $s1 4($fp)
 sw $s2 8($fp)
@@ -252,72 +298,27 @@ sw $s4 16($fp)
 sw $s5 20($fp)
 sw $s6 24($fp)
 sw $s7 28($fp)
-lw $ra 40($fp)
-lw $fp 36($fp)
-addiu $sp $sp 44
+lw $ra 168($fp)
+lw $fp 164($fp)
+addiu $sp $sp 172
 jr $ra
 nop
 f_main:
-addiu $sp $sp -48
-sw $ra 44($sp)
-sw $fp 40($sp)
+addiu $sp $sp -40
+sw $ra 36($sp)
+sw $fp 32($sp)
 move $fp $sp
-sw $s0 36($fp)
-sw $s1 32($fp)
-sw $s2 28($fp)
-sw $s3 24($fp)
-sw $s4 20($fp)
-sw $s5 16($fp)
-sw $s6 12($fp)
-sw $s7 8($fp)
-label_11:
-addiu $sp $sp -4
-li $t0 10
-sw $t0 4($fp)
-li $t1 10
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t0 0($sp)
-sw $t0 0($fp)
-addiu $sp $sp 4
-label_12:
+sw $s0 28($fp)
+sw $s1 24($fp)
+sw $s2 20($fp)
+sw $s3 16($fp)
+sw $s4 12($fp)
+sw $s5 8($fp)
+sw $s6 4($fp)
+sw $s7 0($fp)
+label_10:
 addiu $sp $sp -0
-lw $t0 0($fp)
-li $t1 0
-blt $t0 $t1 label_13
-addiu $sp $sp 0
-label_14:
-addiu $sp $sp -12
-lw $t1 4($fp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t1 0($sp)
-lw $t2 0($fp)
-subu $t0 $t1 $t2
-sw $t0 4($sp)
-lw $t0 0($fp)
-lw $t1 4($sp)
-sll $t1 $t1 2
-sw $t0 g_a($t1 )
-lw $t1 0($fp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 8($sp)
-lw $t0 8($sp)
-sw $t0 0($fp)
-b label_12
-addiu $sp $sp 12
-label_13:
-addiu $sp $sp -4
-lw $t1 4($fp)
-li $t2 1
-subu $t0 $t1 $t2
-sw $t0 0($sp)
-addiu $sp $sp -8
-li $a0 0
-lw $a1 8($sp)
+addiu $sp $sp -0
 addiu $sp $sp -32
 sw $t0 0($sp)
 sw $t1 4($sp)
@@ -327,7 +328,7 @@ sw $t4 16($sp)
 sw $t5 20($sp)
 sw $t6 24($sp)
 sw $t7 28($sp)
-jal f_qsort
+jal f_test_dag
 nop
 lw $t0 0($sp)
 lw $t1 4($sp)
@@ -338,33 +339,7 @@ lw $t5 20($sp)
 lw $t6 24($sp)
 lw $t7 28($sp)
 addiu $sp $sp 32
-addiu $sp $sp 8
-li $t0 0
-sw $t0 0($fp)
-addiu $sp $sp 4
-label_15:
-addiu $sp $sp -0
-lw $t0 0($fp)
-lw $t1 4($fp)
-bge $t0 $t1 label_16
 addiu $sp $sp 0
-label_17:
-addiu $sp $sp -4
-li $v0 1
-lw $a0 0($fp)
-sll $a0 $a0 2
-lw $a0 g_a($a0 )
-syscall
-lw $t1 0($fp)
-li $t2 1
-addu $t0 $t1 $t2
-sw $t0 0($sp)
-lw $t0 0($sp)
-sw $t0 0($fp)
-b label_15
-addiu $sp $sp 4
-label_16:
-addiu $sp $sp -0
 addiu $sp $sp 0
 f_main_return:
 sw $s0 0($fp)
@@ -375,6 +350,6 @@ sw $s4 16($fp)
 sw $s5 20($fp)
 sw $s6 24($fp)
 sw $s7 28($fp)
-lw $ra 44($fp)
-lw $fp 40($fp)
-addiu $sp $sp 48
+lw $ra 36($fp)
+lw $fp 32($fp)
+addiu $sp $sp 40
