@@ -11,11 +11,14 @@ args = parser.parse_args()
 
 p = subprocess.Popen('java -jar ../Mars4.5.jar %s' %
                      (args.asm), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
-rtn = p.communicate(('\n'.join(args.input).encode()))
+rtn = p.communicate(('\n'.join(args.input).encode())
+                    if args.input != None else None)
 
 output = re.split('[\r\n]', rtn[0].decode())[-3]
 
 if output == args.output:
     exit(0)
 else:
+    print('error output : ' + output)
+    print('expect       : ' + args.output)
     exit(1)

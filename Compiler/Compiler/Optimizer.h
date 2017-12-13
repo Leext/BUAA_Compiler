@@ -8,11 +8,11 @@ class Optimizer
 #endif // __TEST
 public:
 	Optimizer();
-	void optimize(IRBuilder builder);
+	void optimize(IRBuilder &builder);
 
 protected:
 	void optimizeBB(BasicBlock *bb);
 	unordered_map<string, Value *> name2var;
 	map<Value *, Value *> var2var;
-	Value* simplify(Value *);
+	Value *simplify(Value *);
 };

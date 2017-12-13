@@ -3,8 +3,6 @@
 #include "Quad.h"
 Operator::~Operator()
 {
-	delete s1;
-	delete s2;
 }
 string Operator::toString() const
 {
@@ -36,7 +34,21 @@ bool Operator::operator==(const Value &q)
 	if (opcode != q.opcode)
 		return false;
 	auto o = static_cast<const Operator &>(q);
-	return *s1 == *(o.s1) && *s2 == *(o.s2);
+	if (s1->opcode == Op_CONST)
+	{
+		if (!((*s1) == (*o.s1)))
+			return false;
+	}
+	else if (s1 != o.s1)
+		return false;
+	if (s2->opcode == Op_CONST)
+	{
+		if (!((*s2) == (*o.s2)))
+			return false;
+	}
+	else if (s2 != o.s2)
+		return false;
+	return true;
 }
 
 string Constant::toString() const
@@ -49,9 +61,12 @@ string Constant::toString() const
 	return std::move(ss.str());
 }
 
-bool Constant::operator==(const Value & q)
+bool Constant::operator==(const Value &q)
 {
-	return opcode == q.opcode && val == static_cast<const Constant&>(q).val;
+	if (opcode != q.opcode)
+		return false;
+	auto o = static_cast<const Constant &>(q);
+	return type == o.type && val == o.val;
 }
 
 string Var::toString() const
@@ -61,7 +76,7 @@ string Var::toString() const
 
 bool Var::operator==(const Value &q)
 {
-	return opcode == q.opcode && name == static_cast<const Var&>(q).name;
+	return opcode == q.opcode && name == static_cast<const Var &>(q).name;
 }
 
 string Array::toString() const
@@ -69,7 +84,7 @@ string Array::toString() const
 	return name + "[" + offset->toString() + "]";
 }
 
-bool Array::operator==(const Value & q)
+bool Array::operator==(const Value &q)
 {
 	return false;
 }
@@ -99,7 +114,6 @@ string CmpBr::toString() const
 	string ret = "compare&branch";
 	return ret;
 }
-
 
 string Goto::toString() const
 {
@@ -151,7 +165,7 @@ string Printf::toString() const
 	return ret;
 }
 
-bool Value::operator==(const Value & q)
+bool Value::operator==(const Value &q)
 {
 	return opcode == q.opcode;
 }

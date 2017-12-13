@@ -5,8 +5,11 @@ Optimizer::Optimizer()
 {
 }
 
-void Optimizer::optimize(IRBuilder builder)
+void Optimizer::optimize(IRBuilder &builder)
 {
+	for (auto f = builder.functions.begin(); f != builder.functions.end(); f++)
+		for (auto bb = (*f)->head; bb != nullptr; bb = bb->next)
+			optimizeBB(bb);
 }
 
 void Optimizer::optimizeBB(BasicBlock *bb)
@@ -21,7 +24,9 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 		{
 			auto var = static_cast<Var *>(*quad);
 			//var2var 中是一定能找到value的，因为operator必定先于var生成
-			name2var[var->name] = var->value = simplify(var->value);
+			var->value = simplify(var->value);
+			if (var->value->opcode != Op_ARRAY)
+				name2var[var->name] = var->value;
 			break;
 		}
 		case Op_ARRAY:
@@ -41,18 +46,12 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 			op->s2 = simplify(op->s2);
 			bool haveSame = false;
 			for (auto i = var2var.begin(); i != var2var.end(); i++)
-			{
-				if ((*i).first->opcode == op->opcode)
+				if ((*op) == *((*i).first))
 				{
-					auto target = static_cast<Operator *>((*i).first);
-					if (target->s1 == op->s1 && target->s2 == op->s2)
-					{
-						var2var[op] = target;
-						haveSame = true;
-						break;
-					}
+					var2var[op] = (*i).second;
+					haveSame = true;
+					break;
 				}
-			}
 			if (!haveSame)
 				var2var[op] = op;
 			break;
@@ -63,6 +62,7 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 			var2var[fcall] = fcall;
 			for (auto arg = fcall->args.begin(); arg != fcall->args.end(); arg++)
 				*arg = simplify(*arg);
+			name2var.clear();
 			break;
 		}
 		case Op_VOIDCALL:
@@ -70,6 +70,7 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 			auto fcall = static_cast<VoidCall *>(*quad);
 			for (auto arg = fcall->args.begin(); arg != fcall->args.end(); arg++)
 				*arg = simplify(*arg);
+			name2var.clear();
 			break;
 		}
 		case Op_BEQ:
@@ -94,6 +95,20 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 				r->ret = simplify(r->ret);
 			break;
 		}
+		case Op_PRINTF:
+		{
+			auto p = static_cast<Printf*>(*quad);
+			if (p->value != nullptr)
+				p->value = simplify(p->value);
+			break;
+		}
+		case Op_SCANF:
+		{
+			auto s = static_cast<Scanf*>(*quad);
+			for (auto i = s->args.begin(); i != s->args.end(); i++)
+				name2var.erase((*i)->name);
+			break;
+		}
 		}
 	}
 	for (auto quad = bb->quads.begin(); quad != bb->quads.end();)
@@ -104,7 +119,7 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 		case Op_SUB:
 		case Op_MULT:
 		case Op_DIV:
-			if (var2var[static_cast<Value*>(*quad)] != *quad)
+			if (var2var[static_cast<Value *>(*quad)] != *quad)
 			{
 				delete *quad;
 				quad = bb->quads.erase(quad);

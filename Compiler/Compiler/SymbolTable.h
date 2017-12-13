@@ -42,7 +42,9 @@ class Function
 	friend class IRBuilder;
 	friend class Parser;
 	friend class Generator;
-  protected:
+	friend class Optimizer;
+
+protected:
 	const string name;
 	SymbolTable *symbolTable;
 	vector<TableElement *> args;

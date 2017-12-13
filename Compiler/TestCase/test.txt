@@ -90,7 +90,9 @@ void main()
 	int i;
 	c = a;
 	c = (c * (a + 'a') / (-15) - b) * 'b';
-	printf(c);
+	i = c + (c * (a + 'a') / (-15) - b) * 'b';
+	i = i - (c * (a + 'a') / (-15) - b) * 'b';
+	printf(i);
 	printf(" ");
 	foo1(a);
 	foo1(-a);

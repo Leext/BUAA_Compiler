@@ -8,6 +8,8 @@
 class IRBuilder
 {
 	friend class Generator;
+	friend class Optimizer;
+
   public:
 	IRBuilder();
 	~IRBuilder();

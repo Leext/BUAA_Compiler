@@ -1,0 +1,20 @@
+int a,c,d;
+char b;
+int ar[100];
+int f(int x)
+{
+	return (x);
+}
+void main()
+{
+	int i;
+	a = 10;
+	b = 'a';
+	c = a;
+	ar[1] = a;
+	ar[a] = 1;
+	d = (c * (ar[ar[a]] + 'a') / (-15) - b) * 'b';
+	i = d + f((c * (a + 'a') / (-15) - b) * 'b');
+	i = i - f((c * (a + 'a') / (-15) - b) * 'b');
+	printf(i);
+}
