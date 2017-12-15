@@ -73,6 +73,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BasicBlock.h" />
+    <ClInclude Include="BitVector.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="global.h" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicBlock.cpp" />
+    <ClCompile Include="BitVector.cpp" />
     <ClCompile Include="Compiler.cpp" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="Generator.cpp" />

@@ -10,6 +10,7 @@
 #include "Parser.h"
 #include "Generator.h"
 #include "Optimizer.h"
+#include "BitVector.h"
 #include <cassert>
 using std::string;
 using std::unordered_map;
@@ -18,11 +19,12 @@ class tester
 public:
 	static void test()
 	{
-		autoTest(string("test.txt"), string("-16464 0123456789 zyxwvutsrq 0123456789 hello10-cube27 -square-4 self-1 self0 self1 square4 cube27 0123456789 zyxwvutsrq 120"), string("1 -1"), true);
+	/*	autoTest(string("test.txt"), string("-16464 0123456789 zyxwvutsrq 0123456789 hello10-cube27 -square-4 self-1 self0 self1 square4 cube27 0123456789 zyxwvutsrq 120"), string("1 -1"), true);
 		autoTest(string("testOp.txt"), string("-16464"), string(""), true);
 		autoTest(string("qsort.cpp"), string("0123456789"), string(""), true);
 		autoTest(string("testDag.txt"), string("21 | 0 | 10 | 10"), string(""), true);
-		optimizeTest();
+		optimizeTest();*/
+		testBitVector();
 	}
 
 	static void testParseVarAndFunc()
@@ -88,17 +90,34 @@ public:
 	{
 		Optimizer opt;
 		BasicBlock bb;
-		Value * x = new Operator(Op_ADD, T_INT, new Var(string("aa"), T_INT), new Var(string("bb"), T_INT));
-		Value * y = new Operator(Op_ADD, T_INT, new Constant(1), new Var(string("bb"), T_INT));
+		auto va = new Var(string("aa"), T_INT);
+		auto vb = new Var(string("bb"), T_INT);
+		Value * x = new Operator(Op_ADD, T_INT, va, vb);
+		auto vvb = new Var(string("bb"), T_INT);
+		Value * y = new Operator(Op_ADD, T_INT, new Constant(1), vvb);
 		Value * z = new Operator(Op_ADD, T_INT, x, y);
 		Value * v = new Var(string("cc"), T_INT, z);
-		Value * a = new Operator(Op_ADD, T_INT, new Var(string("aa"), T_INT), new Var(string("bb"), T_INT));
-		Value * b = new Operator(Op_ADD, T_INT, new Constant(1), new Var(string("bb"), T_INT));
+		auto vva = new Var(string("aa"), T_INT);
+		auto vvvb = new Var(string("bb"), T_INT);
+		Value * a = new Operator(Op_ADD, T_INT, vva, vvvb);
+		auto vvvvb = new Var(string("bb"), T_INT);
+		Value * b = new Operator(Op_ADD, T_INT, new Constant(1), vvvvb);
 		Value * c = new Operator(Op_ADD, T_INT, a, b);
 		Value * w = new Var(string("bb"), T_INT, c);
 		bb.addu(v);
 		bb.addu(w);
 		opt.optimizeBB(&bb);
 
+	}
+	static void testBitVector()
+	{
+		BitVector v(36);
+		BitVector w(36);
+		v.set(32);
+		v.set(0);
+		v.set(2);
+		w.set(2);
+		v = v - w;
+		std::cout << v.toString() << std::endl;
 	}
 };
