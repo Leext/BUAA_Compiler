@@ -294,6 +294,11 @@ void Parser::parseStatement()
 		break;
 	case lBRACE:
 		token = tokenizer.nextToken();
+		if (token == rBRACE)
+		{
+			token = tokenizer.nextToken();
+			return;
+		}
 		parseStatements();
 		if (token != rBRACE)
 		{
