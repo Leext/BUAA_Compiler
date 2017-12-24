@@ -22,11 +22,8 @@ bool compile(string &file)
 	}
 	return false;
 }
-int main(int argc, char *argv[])
+void loop()
 {
-	//tester::testParseVarAndFunc();
-	//tester::testParser();
-	//tester::test();
 	while (1)
 	{
 		try
@@ -41,6 +38,14 @@ int main(int argc, char *argv[])
 		{
 		}
 	}
+}
+int main(int argc, char *argv[])
+{
+	//tester::testParseVarAndFunc();
+	//tester::testParser();
+	//tester::test();
+	loop();
+
 	system("pause");
 	return 0;
 }

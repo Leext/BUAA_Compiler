@@ -18,11 +18,12 @@ class tester
 public:
 	static void test()
 	{
-		autoTest(string("test.txt"), string("-16464 0123456789 zyxwvutsrq 0123456789 hello10-cube27 -square-4 self-1 self0 self1 square4 cube27 0123456789 zyxwvutsrq 120"), string("1 -1"), true);
-		autoTest(string("testOp.txt"), string("-16464"), string(""), true);
-		autoTest(string("qsort.cpp"), string("0123456789"), string(""), true);
-		autoTest(string("testDag.txt"), string("21 | 0 | 10 | 10"), string(""), true);
-		optimizeTest();
+		//autoTest(string("test.txt"), string("-16464 0123456789 zyxwvutsrq 0123456789 hello10-cube27 -square-4 self-1 self0 self1 square4 cube27 0123456789 zyxwvutsrq 120"), string("1 -1"), true);
+		//autoTest(string("testOp.txt"), string("-16464"), string(""), true);
+		//autoTest(string("qsort.cpp"), string("0123456789"), string(""), true);
+		//autoTest(string("testDag.txt"), string("21 | 0 | 10 | 10"), string(""), true);
+		//optimizeTest();
+		autoTest(string("xjs.txt"), string("1b412334"), string("2 4 5"),true);
 	}
 
 	static void testParseVarAndFunc()
