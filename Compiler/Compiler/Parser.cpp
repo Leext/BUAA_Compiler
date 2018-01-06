@@ -200,7 +200,7 @@ void Parser::parseStatement()
 				offset = parseExpression();
 				if (offset == nullptr)
 					goto error;
-				std::cout << "expression " << offset->toString() << std::endl;
+				//std::cout << "expression " << offset->toString() << std::endl;
 				if (token != rBRACK)
 				{
 					error.report(tokenizer.getLineCount(), tokenizer.getLine(), RIGHT_BRACKET_EXPECTED);
@@ -218,12 +218,12 @@ void Parser::parseStatement()
 			{
 				error.report(tokenizer.getLineCount(), tokenizer.getLine(), CHANGE_CONST_VALUE);
 			}
-			std::cout << "this is an assign statement\n";
+			//std::cout << "this is an assign statement\n";
 			token = tokenizer.nextToken();
 			auto val = parseExpression();
 			if (val == nullptr)
 				goto error;
-			std::cout << "expression " << val->toString() << std::endl;
+			//std::cout << "expression " << val->toString() << std::endl;
 			if (te->kind == K_ARRAY)
 				builder.addStatement(new Array(offset, te->name, te->type, val));
 			else
@@ -468,7 +468,7 @@ void Parser::parseConstDeclare()
 {
 	if (token != CONST)
 	{
-		std::cout << "???\n";
+		//std::cout << "???\n";
 		return;
 	}
 	token = tokenizer.nextToken();
@@ -696,9 +696,9 @@ void Parser::parseVarAndFuncDeclare()
 
 void Parser::parseSwitch()
 {
-	if (token != SWITCH)
-		std::cout << "???\n";
-	std::cout << "this is a switch statement\n";
+	//if (token != SWITCH)
+		//std::cout << "???\n";
+	//std::cout << "this is a switch statement\n";
 	int n;
 	char c;
 	if (!match(lPARE))
@@ -839,9 +839,9 @@ void Parser::parseSwitch()
 
 void Parser::parseIf()
 {
-	if (token != IF)
-		std::cout << "???\n";
-	std::cout << "this is an if statement\n";
+	//if (token != IF)
+		//std::cout << "???\n";
+	//std::cout << "this is an if statement\n";
 	if (!match(lPARE))
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
@@ -909,9 +909,9 @@ error:
 
 void Parser::parseWhile()
 {
-	if (token != WHILE)
-		std::cout << "???\n";
-	std::cout << "this is a while loop\n";
+	//if (token != WHILE)
+		//std::cout << "???\n";
+	//std::cout << "this is a while loop\n";
 	if (!match(lPARE))
 	{
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
@@ -969,7 +969,7 @@ error:
 
 void Parser::parseScanf()
 {
-	std::cout << "this is a scanf\n";
+	//std::cout << "this is a scanf\n";
 	if (!match(lPARE))
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
 	vector<Var *> args;
@@ -1006,7 +1006,7 @@ void Parser::parseScanf()
 
 void Parser::parsePrintf()
 {
-	std::cout << "this is a printf\n";
+	//std::cout << "this is a printf\n";
 	if (!match(lPARE))
 		error.report(tokenizer.getLineCount(), tokenizer.getLine(), LEFT_PARENTHESES_EXPECTED);
 	int strIndex;
@@ -1087,7 +1087,7 @@ void Parser::parseProgram()
 
 void Parser::parseReturn()
 {
-	std::cout << "this is a return statement\n";
+	//std::cout << "this is a return statement\n";
 	const Function *func = builder.getCurrentFunction();
 	token = tokenizer.nextToken();
 	if (func->type == T_VOID)

@@ -24,13 +24,13 @@ bool IRBuilder::createFunc(Type type, string &name)
 	functions.push_back(function);
 	currentSymbolTable = function->symbolTable;
 	insertBlock = function->head;
-	std::cout << "create function " << name << " of type " << t << std::endl;
+	//std::cout << "create function " << name << " of type " << t << std::endl;
 	return true;
 }
 
 bool IRBuilder::createArg(Type type, string &name)
 {
-	std::cout << "create arg " << name << " of type " << (type == T_INT ? "int" : "char") << std::endl;
+	//std::cout << "create arg " << name << " of type " << (type == T_INT ? "int" : "char") << std::endl;
 	functions.back()->haveArgs = true;
 	if (currentSymbolTable->lookup(name) != nullptr)
 		return false;
@@ -46,7 +46,7 @@ bool IRBuilder::createArg(Type type, string &name)
 */
 bool IRBuilder::createVarDeclare(Type type, string &name, int size)
 {
-	std::cout << "create var " << name << ((size == 0) ? "" : "[]") << " of type " << ((type == T_INT) ? "int" : "char") << std::endl;
+	//std::cout << "create var " << name << ((size == 0) ? "" : "[]") << " of type " << ((type == T_INT) ? "int" : "char") << std::endl;
 	if (currentSymbolTable->lookup(name) != nullptr)
 		return false;
 	else
@@ -56,7 +56,7 @@ bool IRBuilder::createVarDeclare(Type type, string &name, int size)
 
 bool IRBuilder::createConstDecalre(Type type, string &name, int val)
 {
-	std::cout << "create constant " << name << " of type " << (type == T_INT ? "int" : "char") << "  val : " << (type == T_INT ? val : (char)val) << std::endl;
+	//std::cout << "create constant " << name << " of type " << (type == T_INT ? "int" : "char") << "  val : " << (type == T_INT ? val : (char)val) << std::endl;
 	if (currentSymbolTable->lookup(name) != nullptr)
 		return false;
 	else
