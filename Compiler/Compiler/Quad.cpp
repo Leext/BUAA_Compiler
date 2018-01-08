@@ -4,29 +4,26 @@
 Operator::~Operator()
 {
 }
+int Quad::count = 0;
 string Operator::toString() const
 {
 	string r;
-	r += "(";
-	r += s1->toString();
 	switch (opcode)
 	{
 	case Op_ADD:
-		r += "+";
+		r += " + ";
 		break;
 	case Op_SUB:
-		r += "-";
+		r += " - ";
 		break;
 	case Op_DIV:
-		r += "/";
+		r += " / ";
 		break;
 	case Op_MULT:
-		r += "*";
+		r += " * ";
 		break;
 	}
-	r += s2->toString();
-	r += ")";
-	return std::move(r);
+	return id + " = " + s1->id + r + s2->id;
 }
 
 bool Operator::operator==(const Value &q)
@@ -71,7 +68,10 @@ bool Constant::operator==(const Value &q)
 
 string Var::toString() const
 {
-	return name;
+	string r = name;
+	if (value != nullptr)
+		r += " = " + value->id;
+	return r;
 }
 
 bool Var::operator==(const Value &q)
@@ -81,7 +81,7 @@ bool Var::operator==(const Value &q)
 
 string Array::toString() const
 {
-	return name + "[" + offset->toString() + "]";
+	return name + "[" + offset->id + "]";
 }
 
 bool Array::operator==(const Value &q)
@@ -96,7 +96,7 @@ string FunctCall::toString() const
 	{
 		ret += '(';
 		for (auto i = args.begin(); i != args.end(); i++)
-			ret += (*i)->toString() + ", ";
+			ret += (*i)->id + ", ";
 		ret.pop_back();
 		ret.pop_back();
 		ret += ')';
@@ -111,7 +111,7 @@ string Label::toString() const
 
 string CmpBr::toString() const
 {
-	string ret = "compare&branch";
+	string ret;
 	return ret;
 }
 
@@ -127,7 +127,7 @@ string VoidCall::toString() const
 	if (args.size())
 	{
 		for (auto i = args.begin(); i != args.end(); i++)
-			ret += (*i)->toString() + ", ";
+			ret += (*i)->id + ", ";
 		ret.pop_back();
 		ret.back() = ')';
 	}
