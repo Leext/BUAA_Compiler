@@ -14,6 +14,8 @@ bool compile(string &file)
 	parser.startParse();
 	if (!parser.haveError())
 	{
+		Optimizer opt;
+		opt.optimize(builder);
 		Generator generator = Generator(&builder);
 		generator.generate();
 		auto out = std::fstream("../output.txt", std::fstream::out);
@@ -43,8 +45,8 @@ int main(int argc, char *argv[])
 {
 	//tester::testParseVarAndFunc();
 	//tester::testParser();
-	//tester::test();
-	loop();
+	tester::test();
+	//loop();
 
 	system("pause");
 	return 0;
