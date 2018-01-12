@@ -543,27 +543,62 @@ void Generator::generateFunctionOpt(Function * function)
 			case Op_ADD:
 			{
 				auto op = static_cast<Operator *>(*quad);
-				auto s1 = getReg(*op->s1) + " ";
-				tempRegs[s1[2] - '0'].fix = true;
-				auto s2 = getReg(*op->s2) + " ";
-				tempRegs[s1[2] - '0'].fix = false;
-				decreaseRef(op->s1);
-				decreaseRef(op->s2);
-				auto s0 = getReg(*op, true) + " ";
-				code.push_back("addu " + s0 + s1 + s2 + "#\t" + op->toString());
+				if (op->s2->opcode == Op_CONST)
+				{
+					auto s2 = static_cast<Constant*>(op->s2);
+					if (op->s1->opcode == Op_CONST)
+					{
+						auto s1 = static_cast<Constant*>(op->s1);
+						auto s0 = getReg(*op, true) + " ";
+						code.push_back("li " + s0 + to_string((long long)(s1->val + s2->val)) + "\t#" + op->toString());
+						break;
+					}
+					auto s1 = getReg(*op->s1) + " ";
+					auto s0 = getReg(*op, true) + " ";
+					code.push_back("addiu " + s0 + s1 + " " + to_string((long long)s2->val) + "\t#" + op->toString());
+				}
+				else
+				{
+					auto s1 = getReg(*op->s1) + " ";
+					tempRegs[s1[2] - '0'].fix = true;
+					auto s2 = getReg(*op->s2) + " ";
+					tempRegs[s1[2] - '0'].fix = false;
+					decreaseRef(op->s1);
+					decreaseRef(op->s2);
+					auto s0 = getReg(*op, true) + " ";
+					code.push_back("addu " + s0 + s1 + s2 + "#\t" + op->toString());
+				}
 				break;
 			}
 			case Op_SUB:
 			{
+
 				auto op = static_cast<Operator *>(*quad);
-				auto s1 = getReg(*op->s1) + " ";
-				tempRegs[s1[2] - '0'].fix = true;
-				auto s2 = getReg(*op->s2) + " ";
-				tempRegs[s1[2] - '0'].fix = false;
-				decreaseRef(op->s1);
-				decreaseRef(op->s2);
-				auto s0 = getReg(*op, true) + " ";;
-				code.push_back("subu " + s0 + s1 + s2 + "#\t" + op->toString());
+				if (op->s2->opcode == Op_CONST)
+				{
+					auto s2 = static_cast<Constant*>(op->s2);
+					if (op->s1->opcode == Op_CONST)
+					{
+						auto s1 = static_cast<Constant*>(op->s1);
+						auto s0 = getReg(*op, true) + " ";
+						code.push_back("li " + s0 + to_string((long long)(s1->val - s2->val)) + "\t#" + op->toString());
+						break;
+					}
+					auto s1 = getReg(*op->s1) + " ";
+					auto s0 = getReg(*op, true) + " ";
+					code.push_back("subiu " + s0 + s1 + " " + to_string((long long)s2->val) + "\t#" + op->toString());
+				}
+				else
+				{
+					auto s1 = getReg(*op->s1) + " ";
+					tempRegs[s1[2] - '0'].fix = true;
+					auto s2 = getReg(*op->s2) + " ";
+					tempRegs[s1[2] - '0'].fix = false;
+					decreaseRef(op->s1);
+					decreaseRef(op->s2);
+					auto s0 = getReg(*op, true) + " ";;
+					code.push_back("subu " + s0 + s1 + s2 + "#\t" + op->toString());
+				}
 				break;;
 			}
 			case Op_MULT:
@@ -684,6 +719,14 @@ void Generator::generateFunctionOpt(Function * function)
 				auto op = static_cast<Var *>(*quad);
 				if (op->value != nullptr)
 				{
+					if (op->value->opcode == Op_CONST && function->lookup(op->name) != nullptr)
+					{
+
+						auto lReg = getReg(*op, true);
+						auto val = static_cast<Constant*>(op->value);
+						code.push_back("li " + lReg + " " + to_string((long long)val->val) + "\t#" + op->toString());
+						break;
+					}
 					auto rReg = getReg(*op->value);
 					decreaseRef(op->value);
 					if (function->lookup(op->name) != nullptr)
@@ -691,11 +734,11 @@ void Generator::generateFunctionOpt(Function * function)
 						auto lReg = getReg(*op, true);
 						decreaseRef(op);
 						if (rReg != lReg)
-							code.push_back("move " + lReg + " " + rReg + "#\t" + op->toString());
+							code.push_back("move " + lReg + " " + rReg + "\t#" + op->toString());
 					}
 					else
 					{
-						code.push_back("#\t" + op->toString());
+						code.push_back("\t#" + op->toString());
 						storeValue(function, op, rReg);
 					}
 				}
