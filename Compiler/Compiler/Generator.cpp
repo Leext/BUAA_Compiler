@@ -11,35 +11,42 @@ void Generator::generate()
 {
 	init();
 	generateData();
-	code.push_back(".text");
-	code.push_back("b f_main");
-	code.push_back("nop");
+	finalCode.push_back(".text");
+	finalCode.push_back("b f_main");
+	finalCode.push_back("nop");
 	for (auto i = builder->functions.begin(); i != builder->functions.end(); i++)
+	{
+		initCode.clear();
+		code.clear();
+		loadedToGloabal.clear();
 		generateFunctionOpt(*i);
+		finalCode.insert(finalCode.end(), initCode.begin(), initCode.end());
+		finalCode.insert(finalCode.end(), code.begin(), code.end());
+	}
 }
 
 void Generator::generateData()
 {
-	code.push_back(".data");
+	finalCode.push_back(".data");
 	auto &symbols = builder->globalSymbolTable.symbols;
 	for (auto i = symbols.begin(); i != symbols.end(); i++)
 	{
 		switch ((*i)->kind)
 		{
 		case K_VAR:
-			code.push_back("g_" + (*i)->name + ": .word 0");
+			finalCode.push_back("g_" + (*i)->name + ": .word 0");
 			break;
 		case K_CONST:
-			code.push_back("g_" + (*i)->name + ": .word " + to_string((long long)(*i)->value));
+			finalCode.push_back("g_" + (*i)->name + ": .word " + to_string((long long)(*i)->value));
 			break;
 		case K_ARRAY:
-			code.push_back("g_" + (*i)->name + ": .space " + std::to_string((long long)(4 * (*i)->value)));
+			finalCode.push_back("g_" + (*i)->name + ": .space " + std::to_string((long long)(4 * (*i)->value)));
 			break;
 		}
 	}
 	auto &strs = builder->strTable;
 	for (int i = 0; i < strs.size(); i++)
-		code.push_back("str_" + std::to_string((long long)i) + ": .asciiz \"" + strs[i] + "\"");
+		finalCode.push_back("str_" + std::to_string((long long)i) + ": .asciiz \"" + strs[i] + "\"");
 }
 
 void Generator::generateFunction(Function *function)
@@ -485,32 +492,43 @@ void Generator::generateFunctionOpt(Function * function)
 {
 	this->function = function;
 	int offset = countVar(function);
+	allocateGloabal(function);
 	TempReg.clear();
 
-	code.push_back("\nf_" + function->name + ":");
+	initCode.push_back("\nf_" + function->name + ":");
 	auto symbolTable = function->symbolTable->symbols;
 
-	code.push_back("addiu $sp $sp -" + to_string((long long)offset));
-	code.push_back("sw $ra " + to_string((long long)(-4 + offset)) + "($sp)");
-	code.push_back("sw $fp " + to_string((long long)(-8 + offset)) + "($sp)");
+	initCode.push_back("addiu $sp $sp -" + to_string((long long)offset));
+	initCode.push_back("sw $ra " + to_string((long long)(-4 + offset)) + "($sp)");
+	initCode.push_back("sw $fp " + to_string((long long)(-8 + offset)) + "($sp)");
 	// save $s0~$s7
 	for (int i = 0; i < 8; i++)
-		code.push_back("sw $s" + to_string((long long)i) + " " + to_string((long long)(-12 - (i << 2) + offset)) + "($sp)");
+		initCode.push_back("sw $s" + to_string((long long)i) + " " + to_string((long long)(-12 - (i << 2) + offset)) + "($sp)");
 	// store $a0~a3
 	for (int i = 0; i < function->args.size(); i++)
 	{
 		int tmp = (i << 2) + offset + (8 << 2);
 		if (i < 4)
-			code.push_back("sw $a" + to_string((long long)i) + " " + to_string((long long)tmp) + "($sp)");
+			initCode.push_back("sw $a" + to_string((long long)i) + " " + to_string((long long)tmp) + "($sp)");
 		stackOffset[function->args[i]->name] = tmp;
 	}
 	// initialize const
 	for (auto i = symbolTable.begin(); i != symbolTable.end(); i++)
 		if ((*i)->kind == K_CONST)
 		{
-			code.push_back("li $t0 " + to_string((long long)(*i)->value));
-			code.push_back("sw $t0 " + to_string((long long)stackOffset[(*i)->name]) + "($sp)");
+			if (GlobalReg.find((*i)->name) != GlobalReg.end())
+			{
+				loadedToGloabal.insert((*i)->name);
+				initCode.push_back("li $s" + to_string((long long)GlobalReg[(*i)->name]) + " " + to_string((long long)(*i)->value));
+			}
+			else
+			{
+				initCode.push_back("li $t0 " + to_string((long long)(*i)->value));
+				initCode.push_back("sw $t0 " + to_string((long long)stackOffset[(*i)->name]) + "($sp)");
+			}
 		}
+	// init global
+
 
 	for (auto bb = function->head; bb != nullptr; bb = bb->next)
 	{
@@ -960,7 +978,7 @@ void Generator::generateFunctionOpt(Function * function)
 	code.push_back("f_" + function->name + "_return:");
 	// load $s0~$s7
 	for (int i = 0; i < 8; i++)
-		code.push_back("sw $s" + to_string((long long)i) + " " + to_string((long long)(-12 - (i << 2)) + offset) + "($sp)");
+		code.push_back("lw $s" + to_string((long long)i) + " " + to_string((long long)(-12 - (i << 2)) + offset) + "($sp)");
 
 	code.push_back("lw $ra " + to_string((long long)(-4 + offset)) + "($sp)");
 	code.push_back("lw $fp " + to_string((long long)(-8 + offset)) + "($sp)");
@@ -1018,7 +1036,50 @@ void Generator::loadValue(Function *function, Quad *quad, string &reg, int temp)
 		code.push_back(instr + reg + to_string((long long)(stackOffset[quad->id] + temp)) + "($sp)" + "\t#" + quad->id);
 	}
 }
-
+void Generator::loadValueG(Function *function, Quad *quad, string &reg, int temp)
+{
+	if (reg.back() != ' ')
+		reg += ' ';
+	string instr = (static_cast<Value *>(quad)->type == T_INT) ? "lw " : "lb ";
+	if (quad->opcode == Op_CONST)
+		initCode.push_back("li " + reg + to_string((long long)static_cast<Constant *>(quad)->val) + "\t#" + quad->id);
+	else if (quad->opcode == Op_VAR)
+	{
+		auto name = static_cast<Var *>(quad)->name;
+		if (function->lookup(name) != nullptr) // local var
+			initCode.push_back(instr + reg + to_string((long long)stackOffset[name] + temp) + "($sp)" + "\t#" + name);
+		else //global var
+			initCode.push_back(instr + reg + "g_" + name + "\t#" + name);
+	}
+	else if (quad->opcode == Op_ARRAY)
+	{
+		auto name = static_cast<Array *>(quad)->name;
+		auto offset = static_cast<Array *>(quad)->offset;
+		if (offset->opcode != Op_ARRAY)
+		{
+			auto offReg = getReg(*offset, false, temp);
+			decreaseRef(offset);
+			moveToReg(*offset, reg);
+		}
+		else
+			loadValue(function, offset, reg, temp);
+		if (function->lookup(name) != nullptr)
+		{
+			initCode.push_back("sll " + reg + reg + to_string(2ll));											// reg is address offset
+			initCode.push_back("addu " + reg + reg + "$sp");													// reg = $fp + address offset
+			initCode.push_back(instr + reg + to_string((long long)stackOffset[name] + temp) + "(" + reg + ")"); // reg += base address
+		}
+		else
+		{
+			initCode.push_back("sll " + reg + reg + to_string(2ll));
+			initCode.push_back(instr + reg + "g_" + name + "(" + reg + ")");
+		}
+	}
+	else
+	{
+		initCode.push_back(instr + reg + to_string((long long)(stackOffset[quad->id] + temp)) + "($sp)" + "\t#" + quad->id);
+	}
+}
 void Generator::storeValue(Function *function, Quad *quad, string &reg)
 {
 	if (reg.back() != ' ')
@@ -1069,7 +1130,18 @@ string Generator::getReg(Value & value, bool write, int temp)
 {
 	auto&id = value.id;
 	if (GlobalReg.find(id) != GlobalReg.end())   // 分配全局寄存器的变量
-		return "$s" + to_string((long long)GlobalReg[id]);
+	{
+		string reg = "$s" + to_string((long long)GlobalReg[id]);
+		if (loadedToGloabal.find(id) == loadedToGloabal.end())
+		{
+			loadedToGloabal.insert(id);
+			if (!write)
+			{
+				loadValueG(function, &value, reg, temp);
+			}
+		}
+		return reg;
+	}
 	else if (TempReg.find(id) != TempReg.end())  // 在临时寄存器中的变量
 		return TempReg[id]->name;
 	auto& reg = spill();
@@ -1085,7 +1157,15 @@ void Generator::moveToReg(Value & value, string&reg, int temp)
 {
 	auto&id = value.id;
 	if (GlobalReg.find(id) != GlobalReg.end())   // 分配全局寄存器的变量
-		code.push_back("move " + reg + " $s" + to_string((long long)GlobalReg[id]));
+	{
+		string greg = " $s" + to_string((long long)GlobalReg[id]);
+		if (loadedToGloabal.find(id) == loadedToGloabal.end())
+		{
+			loadedToGloabal.insert(id);
+			loadValueG(function, &value, greg, temp);
+		}
+		code.push_back("move " + reg + greg);
+	}
 	else if (TempReg.find(id) != TempReg.end())  // 在临时寄存器中的变量
 		code.push_back("move " + reg + " " + TempReg[id]->name);
 	else
@@ -1261,9 +1341,30 @@ int Generator::countVar(Function * function)
 		(*i).second = offset - (*i).second;
 	return offset + 4;
 }
+typedef std::pair<string, int> V;
+bool cmp(V&a, V&b)
+{
+	return a.second > b.second;
+}
+void Generator::allocateGloabal(Function * function)
+{
+	int globalRegNum = 8;
+	vector<V> v;
+	for (auto var = refCount.begin(); var != refCount.end(); var++)
+		v.emplace_back(std::make_pair(var->first, var->second));
+	std::sort(v.begin(), v.end(), cmp);
+	GlobalReg.clear();
+	for (int i = 0, rest = globalRegNum; rest > 0 && i < v.size(); i++)
+	{
+		if (function->lookup(v[i].first) == nullptr)
+			continue;
+		GlobalReg[v[i].first] = 8 - rest;
+		rest--;
+	}
+}
 
 void Generator::print(fstream &output)
 {
-	for (auto i = code.begin(); i != code.end(); i++)
+	for (auto i = finalCode.begin(); i != finalCode.end(); i++)
 		output << *i << std::endl;
 }
