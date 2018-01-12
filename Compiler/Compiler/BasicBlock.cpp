@@ -57,8 +57,6 @@ void BasicBlock::addu(Quad *quad)
 		addu(op->offset);
 		if (op->value != nullptr)
 			addu(op->value);
-		else
-			return;
 		break;
 	}
 	case Op_FUNCALL:

@@ -32,7 +32,8 @@ void Optimizer::optimizeBB(BasicBlock *bb)
 		case Op_ARRAY:
 		{
 			auto var = static_cast<Array *>(*quad);
-			var->value = simplify(var->value);
+			if (var->value != nullptr)
+				var->value = simplify(var->value);
 			var->offset = simplify(var->offset);
 			break;
 		}
