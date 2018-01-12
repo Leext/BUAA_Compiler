@@ -487,7 +487,7 @@ void Generator::generateFunctionOpt(Function * function)
 	int offset = countVar(function);
 	TempReg.clear();
 
-	code.push_back("f_" + function->name + ":");
+	code.push_back("\nf_" + function->name + ":");
 	auto symbolTable = function->symbolTable->symbols;
 
 	code.push_back("addiu $sp $sp -" + to_string((long long)offset));
@@ -1032,7 +1032,7 @@ void Generator::storeValue(Function *function, Quad *quad, string &reg)
 		else
 			code.push_back(instr + reg + " g_" + name + "\t#" + name);
 	}
-	else if (quad->opcode != Op_ARRAY)
+	else if (quad->opcode != Op_ARRAY && quad->opcode != Op_CONST)
 	{
 		code.push_back(instr + reg + to_string((long long)stackOffset[quad->id]) + "($sp)" + "\t#" + quad->id);
 	}
