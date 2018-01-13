@@ -138,6 +138,10 @@ Value *Parser::parseFactor()
 			ret = new FunctCall(func->name, func->type, args);
 			return ret;
 		}
+		else
+		{
+			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNDEFINED_IDENTIFIER, identifier);
+		}
 		break;
 	case lPARE:
 		token = tokenizer.nextToken();
@@ -1072,16 +1076,20 @@ void Parser::parseProgram()
 		{
 			parseVarAndFuncDeclare();
 		}
+		if(token!=TK_EOF)
+		{
+			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
+		}
 	}
 	catch (string &e)
 	{
 		if (token != TK_EOF)
-			std::cout << "redundant\n";
+			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 	}
 	catch (int e)
 	{
 		if (token != TK_EOF)
-			std::cout << "redundant\n";
+			error.report(tokenizer.getLineCount(), tokenizer.getLine(), UNEXPECTED_TOKEN);
 	}
 }
 
