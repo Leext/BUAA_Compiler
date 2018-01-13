@@ -1178,10 +1178,14 @@ string Generator::getReg(Value & value, bool write, int temp)
 		if (loadedToGloabal.find(id) == loadedToGloabal.end())
 		{
 			loadedToGloabal.insert(id);
-			if (!write)
-			{
+			auto e = function->lookup(value.id);
+			if (e != nullptr && e->kind == K_PARA)
 				loadValueG(function, &value, reg, temp);
-			}
+			else
+				if (!write)
+				{
+					loadValueG(function, &value, reg, temp);
+				}
 		}
 		return reg;
 	}
@@ -1399,7 +1403,10 @@ void Generator::allocateGloabal(Function * function)
 	GlobalReg.clear();
 	for (int i = 0, rest = globalRegNum; rest > 0 && i < v.size(); i++)
 	{
-		if (function->lookup(v[i].first) == nullptr)
+		auto e = function->lookup(v[i].first);
+		if (e == nullptr)
+			continue;
+		if (e->kind == K_PARA)
 			continue;
 		GlobalReg[v[i].first] = 8 - rest;
 		rest--;
