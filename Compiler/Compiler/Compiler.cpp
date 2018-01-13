@@ -20,6 +20,7 @@ bool compile(string &file)
 		generator.generate();
 		auto out = std::fstream("../output.txt", std::fstream::out);
 		generator.print(out);
+		builder.print(string("../quad.txt"));
 		return true;
 	}
 	return false;
@@ -45,8 +46,8 @@ int main(int argc, char *argv[])
 {
 	//tester::testParseVarAndFunc();
 	//tester::testParser();
-	tester::test();
-	//loop();
+	//tester::test();
+	loop();
 
 	system("pause");
 	return 0;

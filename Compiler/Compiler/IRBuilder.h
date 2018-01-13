@@ -33,6 +33,7 @@ class IRBuilder
 	{
 		return functions.back();
 	}
+	void print(string &file);
 
   protected:
 	SymbolTable globalSymbolTable;

@@ -81,7 +81,10 @@ bool Var::operator==(const Value &q)
 
 string Array::toString() const
 {
-	return name + "[" + offset->id + "]";
+	string r = name + "[" + offset->id + "]";
+	if (value != nullptr)
+		r += " = " + value->id;
+	return r;
 }
 
 bool Array::operator==(const Value &q)
@@ -106,12 +109,36 @@ string FunctCall::toString() const
 
 string Label::toString() const
 {
-	return string("block " + std::to_string((long long)(controller->id)));
+	return string("block_" + std::to_string((long long)(controller->id)));
 }
 
 string CmpBr::toString() const
 {
 	string ret;
+	switch (opcode)
+	{
+	case Op_BGE:
+		ret += "bge " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	case Op_BGT:
+		ret += "bgt " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	case Op_BEQ:
+		ret += "beq " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	case Op_BEQZ:
+		ret += "beqz " + s1->id + " " + label->toString();
+		break;
+	case Op_BLE:
+		ret += "ble " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	case Op_BLT:
+		ret += "blt " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	case Op_BNE:
+		ret += "bne " + s1->id + " " + s2->id + " " + label->toString();
+		break;
+	}
 	return ret;
 }
 

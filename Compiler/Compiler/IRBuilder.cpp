@@ -161,3 +161,13 @@ const TableElement *IRBuilder::lookupLocal(const string &name)
 		return ret;
 	return nullptr;
 }
+
+void IRBuilder::print(string &file)
+{
+	auto out = std::fstream(file, std::fstream::out);
+	for (auto f = functions.begin(); f != functions.end(); f++)
+		for (auto bb = (*f)->head; bb != nullptr; bb = bb->next)
+			for (auto quad = bb->quads.begin(); quad != bb->quads.end(); quad++)
+				out << (*quad)->toString() << std::endl;
+	out.close();
+}
