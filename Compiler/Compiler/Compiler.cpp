@@ -18,9 +18,9 @@ bool compile(string &file)
 		opt.optimize(builder);
 		Generator generator = Generator(&builder);
 		generator.generate();
-		auto out = std::fstream("../output.txt", std::fstream::out);
+		auto out = std::fstream("output.txt", std::fstream::out);
 		generator.print(out);
-		builder.print(string("../quad.txt"));
+		builder.print(string("quad.txt"));
 		return true;
 	}
 	return false;
